@@ -1,0 +1,274 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+
+
+.dashboard {
+  min-height: 100vh;
+  background: #0b1220;
+  font-family: "Inter", sans-serif;
+}
+
+
+/* MAIN */
+.main {
+  padding: 30px;
+  color: white;
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.headerActions input {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: none;
+  background: #111c33;
+  color: white;
+}
+
+/* SUBMIT BUTTON */
+.submitBtn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(to right, #00d4ff, #2563eb);
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.submitBtn:hover {
+  opacity: 0.9;
+}
+
+/* DOWNLOAD ICON BUTTON */
+.downloadIcon {
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(to right, #7c3aed, #ff4ecd);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.downloadIcon:hover {
+  opacity: 0.85;
+}
+
+/* KPI CARDS */
+.kpiGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 18px;
+  margin: 25px 0;
+}
+
+
+.kpiGrid div {
+  padding: 18px;
+  border-radius: 18px;
+  font-weight: bold;
+}
+
+.kpiCardPurple {
+  background: linear-gradient(to right, #7c3aed, #ff4ecd);
+}
+
+.kpiCardBlue {
+  background: linear-gradient(to right, #00d4ff, #2563eb);
+}
+
+.kpiCardRed {
+  background: linear-gradient(to right, #ff4ecd, #ef4444);
+}
+
+.kpiCardIndigo {
+  background: linear-gradient(to right, #2563eb, #4f46e5);
+}
+
+/* CHARTS */
+.chartGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+}
+
+.bottomGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  margin-top: 25px;
+}
+
+.card {
+  background: #111c33;
+  padding: 20px;
+  border-radius: 18px;
+  box-shadow: 0px 0px 25px rgba(124, 58, 237, 0.3);
+  
+}
+
+.payments div {
+  margin: 12px 0;
+  color: #cbd5e1;
+}
+.paymentGroup {
+  background: rgba(255, 255, 255, 0.04);
+  padding: 15px;
+  border-radius: 14px;
+  margin-top: 18px;
+}
+
+.paymentGroup h4 {
+  font-size: 14px;
+  margin-bottom: 12px;
+  color: #00d4ff;
+  font-weight: 600;
+}
+
+.paymentGroup div {
+  margin: 10px 0;
+  color: #cbd5e1;
+  display: flex;
+  justify-content: space-between;
+}
+.graphLabel {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #94a3b8;
+}
+.pieWrapper {
+  display: flex;
+  justify-content: flex-end; /* ? Move right */
+  align-items: flex-start;
+
+  margin-top: -15px; /* ? Move up */
+  padding-right: 15px; /* ? Extra right spacing */
+}
+.chartHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.chartFilters {
+  display: flex;
+  gap: 10px;
+}
+
+.chartFilters select {
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  outline: none;
+}
+
+.searchBtn {
+  padding: 7px 14px;
+  background: #7c3aed;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.searchBtn:hover {
+  opacity: 0.9;
+}
+/* PAYMENT TABLE WRAPPER */
+.paymentTables {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* EACH TABLE BOX */
+.paymentTable {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 18px;
+  border-radius: 16px;
+}
+
+/* TABLE ROW (4 COLUMNS) */
+.tableRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+
+/* EACH COLUMN CELL */
+.tableCol {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 14px;
+  border-radius: 14px;
+  text-align: center;
+}
+
+/* LABEL */
+.tableCol span {
+  font-size: 13px;
+  color: #bbb;
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* VALUE */
+.tableCol b {
+  font-size: 16px;
+  color: #fff;
+  font-weight: 600;
+}
+/* BANK BALANCE SEARCH ROW */
+.bankSearchRow {
+  display: flex;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.bankSearchRow input {
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: none;
+  background: #111c33;
+  color: white;
+  cursor: pointer;
+}
+
+/* BANK BALANCE DISPLAY */
+.bankBalanceBox {
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  text-align: center;
+}
+
+.bankBalanceBox p {
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.bankBalanceBox h2 {
+  font-size: 26px;
+  margin-top: 8px;
+  font-weight: bold;
+  color: white;
+}

@@ -1,0 +1,122 @@
+.searchcontainer {
+  background-color: #c4f10e;
+}
+
+.searchicon {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  color: white;
+  z-index: 2;
+  cursor: pointer;
+}
+
+.searchWrapper {
+  position: relative;
+}
+
+.extand {
+  width: 18vw;
+  padding: 5px 15px;
+  box-sizing: border-box;
+  margin-left: 20px;
+  border: 2px solid #c1b5b5;
+  outline: #383a38;
+  border-radius: 15px;
+  font-size: 14px;
+  font-family: Arial, Helvetica, sans-serif;
+  background: rgb(255, 255, 255);
+  color: black;
+  background-repeat: no-repeat;
+  transition: width 0.4s ease-in-out;
+}
+
+.searchLabel {
+  display: flex;
+  align-items: center;
+}
+
+.searchBar {
+  padding: 4px 10px;
+  font-size: 14px;
+  border-radius: 15px;
+  border: 2px solid #6c6a6a;
+  outline: none;
+  min-width: 120px;
+}
+
+.searchBar::placeholder {
+  font-weight: bold;
+  color: #000000;
+}
+
+.extandcolumn {
+
+  box-sizing: border-box;
+  border: 2px solid #c1b5b5;
+  outline: #09fa19;
+  border-radius: 4px;
+  font-size: 0.75rem;
+
+}
+
+.title {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+  width: max-content;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+.showFilter {
+  font-size: 24px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.showFilter:hover {
+  transform: scale(1.1);
+}
+
+.showPlusCircle {
+  font-size: 24px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.showPlusCircle:hover {
+  transform: scale(1.1);
+}
+
+.showPrintIcon {
+  font-size: 24px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.showPrintIcon:hover {
+  transform: scale(1.1);
+}
+
+.showExcelIcon {
+  font-size: 24px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.showExcelIcon:hover {
+  transform: scale(1.1);
+}
+
+@media only screen and (max-width: 800px) {
+  .searchBar {
+    display: none;
+  }
+} 
+  

@@ -1,0 +1,31 @@
+.mainContainer {
+    position: relative;
+    padding: 16px;
+    background: #f0f2f5;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+  }
+  
+  .switchIcon {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    font-size: 24px;
+    color: #007bff;
+    cursor: pointer;
+    z-index: 999;
+    transition: transform 0.2s ease;
+  }
+  
+  .switchIcon:hover {
+    transform: rotate(180deg);
+  }
+  
+  .contentBox {
+    margin-top: 60px;
+    padding: 24px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  

@@ -1,0 +1,78 @@
+/* src/Pages/Release/ReleaseProcess.module.css */
+.processContainer {
+    height: 100vh;
+    padding: 24px;
+    background-color: #eef2f7;
+    font-family: "Inter", sans-serif;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .backIcon {
+    font-size: 22px;
+    color: #007bff;
+    cursor: pointer;
+    margin-right: 16px;
+    transition: transform 0.2s ease;
+  }
+  .backIcon:hover {
+    transform: scale(1.2);
+  }
+  
+  .title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #2c3e50;
+  }
+  
+  .scrollArea {
+    overflow-y: auto;
+    flex-grow: 1;
+    padding-right: 8px;
+  }
+  
+  .processCard {
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  }
+  
+  .processTitle {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: #4b6cb7;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 4px;
+  }
+  
+  .functionBlock {
+    background: #f9fafe;
+    border-left: 4px solid #4b6cb7;
+    padding: 16px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+  }
+  
+  .functionTitle {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 6px;
+  }
+  
+  .activityName,
+  .description {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 4px;
+  }
+  

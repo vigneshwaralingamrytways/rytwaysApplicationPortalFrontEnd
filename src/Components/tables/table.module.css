@@ -1,0 +1,112 @@
+/*
+
+.tableContainer{
+    width:100% !important;
+    height:max-content;
+    display:table;
+    padding:0em;
+    margin:0em;
+    display:inline-block;
+    overflow:scroll;
+    overflow-y: auto;
+    overflow-x: auto;
+    
+    
+}
+.table{
+    max-width:100% !important;
+    overflow-x: auto;
+    overflow-y : hidden;
+    overflow: hidden;
+}
+
+.hoverclass{
+     cursor: pointer;
+     
+}
+
+.tableStyles{
+    border-radius: .1;
+}
+
+.pagination{
+    align-items: baseline;
+    flex: none !important;
+    padding: 0px;
+}
+
+
+*/
+
+
+/* table.module.css */
+
+
+/* Add your custom styles for the table body 
+.tableBody {
+    max-height: 900px; 
+    overflow-y: scroll;
+    width: 100%;
+  }
+ */
+  
+ /* Add these styles to your table.module.css or your preferred stylesheet */
+
+
+ .searchcontainer {
+    background-color: #c4f10e;
+  }
+  
+  .searchicon {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: white;
+    z-index: 2;
+    cursor: pointer; /* Add this line to make the icon clickable */
+  }
+  
+  .searchWrapper {
+    position: relative;
+  }
+  
+  .extand {
+    width: 2.5rem;
+    box-sizing: border-box;
+    border: 2px solid #c1b5b5;
+    outline: #383a38;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    background: white;
+    color: #c1b5b5;
+    background-repeat: no-repeat;
+    transition: width 0.4s ease-in-out;
+  }
+  
+  .extand:focus {
+    width: 100%;
+    background: white;
+    color: rgb(0, 0, 0);
+  }
+  
+  .extand:focus + span {
+    display: none;
+  }
+  
+  .searchLabel {
+    display: flex;
+    align-items: center;
+  }
+
+  .extandcolumn {
+   
+    box-sizing: border-box;
+    border: 2px solid #c1b5b5;
+    outline: #09fa19;
+    border-radius: 4px;
+    font-size: 0.75rem;
+   
+     }
+  
+  

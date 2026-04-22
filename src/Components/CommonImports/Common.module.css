@@ -1,0 +1,102 @@
+.container {
+  width: 100%;
+  padding-right: 0em;
+  margin: 0em 0em 1em 0em;
+  padding: 0em 0em 1em 0em;
+  display: inline-block;
+}
+.containers {
+  width: 100%;
+  padding: 0px !important; 
+  margin: 0px !important;
+  display: block;
+}
+
+ 
+
+.left {
+  width: 600px;
+  flex-shrink: 0;
+}
+
+.right{
+  width: 500px;
+  flex-shrink: 0;
+}
+
+.bookingMaincontainer {
+  width: 100%;
+  margin: 0em 0em 1em 0em;
+  padding: 0em 0em 1em 0em;
+  display: inline-block;
+  background: linear-gradient(to right, #cfcfcf, #cfcfcf);
+  min-height: 100vh;
+}
+
+.bookingContainer {
+
+  padding-right: 0em;
+  margin: 0em 6em 1em 6em;
+  padding: 0em 0em 1em 0em;
+
+}
+
+.btn {
+  margin-left: 0.2em;
+  width: max-content;
+  display: flex;
+  margin-top: .2em;
+  margin-bottom: .4em
+}
+
+/* .btn{
+  margin-top: 20px;
+} */
+
+.btnEx {
+  margin-left: 0.2em;
+  width: max-content;
+  display: flex;
+  margin-top: 10px;
+}
+
+.entryMaincontainer {
+  width: 100%;
+  margin: 0em 0em 1em 0em;
+  padding: 0em 0em 1em 0em;
+  display: inline-block;
+  background: linear-gradient(to right, #cfcfcf, #cfcfcf);
+  min-height: 100vh;
+}
+
+.smallUpdateButton {
+  appearance: none;
+  background-color: #28a745;
+  border-radius: 2rem;
+  border: none;
+  box-shadow: #1e7e34 0 -4px 6px inset;
+  box-sizing: border-box;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: -apple-system, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  transition: all 0.2s ease-in-out;
+  user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+}
+
+.smallUpdateButton:hover {
+  background-color: #218838;
+  box-shadow: #1c7430 0 -4px 6px inset;
+  transform: scale(1.07);
+}
+
+.smallUpdateButton:active {
+  transform: scale(0.97);
+}

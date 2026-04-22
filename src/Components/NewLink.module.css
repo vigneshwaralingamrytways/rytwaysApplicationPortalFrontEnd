@@ -1,0 +1,235 @@
+/* Fullscreen background container */
+/* .noticecontainer {
+     min-height: 100vh;
+    background: linear-gradient(135deg, #e3f2fd, #ffffff);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
+    width: 100%;
+    padding-right: 0em;
+    margin: 0em 0em 1em 0em;
+    padding: 0em 0em 1em 0em;
+  
+  }
+  
+  .container {
+    width: 100%;
+    padding-right: 0em;
+    margin: 0em 0em 1em 0em;
+    padding: 0em 0em 1em 0em;
+    display: inline-block;
+  }
+ 
+  .noticecard {
+    background-color: #ffffff;
+    border: 1px solid #bbdefb;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 450px;
+    width: 100%;
+    text-align: center;
+    animation: fadeIn 0.6s ease-in-out;
+  }
+  
+
+  .noticetitle {
+    font-size: 28px;
+    font-weight: bold;
+    color: #0d47a1;
+    margin-bottom: 1.2rem;
+  }
+  
+  
+  .noticemessage {
+    font-size: 16px;
+    color: #444;
+    margin-bottom: 1.8rem;
+    line-height: 1.6;
+  }
+  
+
+  .visit-button {
+    display: inline-block;
+    background-color: #1976d2;
+    color: white;
+    text-decoration: none;
+    padding: 10px 24px;
+    border-radius: 25px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  .visit-button:hover {
+    background-color: #1565c0;
+  }
+  
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+   */
+
+   /* Fullscreen background container */
+.noticecontainer {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #e3f2fd, #ffffff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  width: 100%;
+  margin: 0;
+  animation: fadeInContainer 1s ease-in-out;
+}
+
+/* Centered Card Styling */
+.noticecard {
+  background-color: #ffffff;
+  border: 1px solid #bbdefb;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  padding: 2.5rem;
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
+  animation: slideUp 0.6s ease forwards;
+  opacity: 0;
+}
+
+/* Title Styling */
+.noticetitle {
+  font-size: 30px;
+  font-weight: 700;
+  color: #0d47a1;
+  margin-bottom: 1.5rem;
+}
+
+/* Portal container */
+.portalList {
+  text-align: left;
+}
+
+/* Individual portal item block */
+.portalItem {
+  margin-bottom: 2.5rem;
+  animation: fadeInItem 0.5s ease forwards;
+  opacity: 0;
+}
+
+/* Portal Name */
+.portalName {
+  font-size: 20px;
+  color: #1565c0;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* Info text */
+.portalInfo {
+  font-size: 14px;
+  color: #333;
+  margin: 0.2rem 0;
+}
+
+/* Link Styling */
+.new-link {
+  color: #1e88e5;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  word-break: break-word;
+}
+
+.new-link:hover {
+  color: #0d47a1;
+  text-decoration: underline;
+}
+
+/* Visit button */
+.visit-button {
+  display: inline-block;
+  background-color: #1976d2;
+  color: white;
+  text-decoration: none;
+  padding: 10px 24px;
+  border-radius: 25px;
+  font-weight: bold;
+  margin-top: 0.8rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+}
+
+.visit-button:hover {
+  background-color: #0d47a1;
+  box-shadow: 0 6px 16px rgba(13, 71, 161, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Divider */
+.divider {
+  margin: 2rem 0 1.5rem 0;
+  border: none;
+  border-top: 1px solid #c5cae9;
+}
+
+/* Animations */
+@keyframes fadeInContainer {
+  from {
+    opacity: 0;
+    background: #e3f2fd;
+  }
+  to {
+    opacity: 1;
+    background: linear-gradient(135deg, #e3f2fd, #ffffff);
+  }
+}
+
+@keyframes slideUp {
+  0% {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInItem {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .noticecard {
+    padding: 1.5rem;
+    max-width: 90%;
+  }
+
+  .noticetitle {
+    font-size: 24px;
+  }
+
+  .portalName {
+    font-size: 18px;
+  }
+
+  .portalInfo {
+    font-size: 13px;
+  }
+}

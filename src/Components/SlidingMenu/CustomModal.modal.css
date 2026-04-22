@@ -1,0 +1,12 @@
+.custommodal .modalcontent {
+    background: linear-gradient(135deg, #50586C, #2c5364, #203a43);
+    color: white;
+    border-radius: 16px;
+    padding: 20px;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .custommodal .modalbody {
+    padding: 0;
+  }
+  

@@ -1,0 +1,213 @@
+.container {
+    padding: 32px;
+    background: #f4f6fb;
+    font-family: "Inter", "Segoe UI", sans-serif;
+    color: #2c3e50;
+    line-height: 1.6;
+    width: 100vw;
+  }
+  
+  .title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    background: linear-gradient(to right, #4b6cb7, #182848);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .section {
+    margin-bottom: 40px;
+    padding: 24px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .section:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  }
+  
+  .subTitle {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #34495e;
+  }
+  
+  .objective {
+    white-space: pre-wrap;
+    background-color: #fdfdfd;
+    padding: 16px;
+    border-left: 6px solid #4b6cb7;
+    border-radius: 8px;
+    font-size: 15px;
+    line-height: 1.7;
+    color: #555;
+  }
+  
+  .cardRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background: #fdfdfd;
+    padding: 20px;
+    margin-bottom: 16px;
+    border-left: 5px solid #3498db;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  
+  .cardRowHeader {
+    display: flex;
+    font-weight: 600;
+    background-color: #f0f4ff;
+    padding: 8px 16px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  
+  .column {
+    flex: 1 1 14%; /* Fit 7 columns in a row */
+    display: flex;
+    flex-direction: column;
+    min-width: 160px;
+    padding-right: 12px;
+  }
+  .headerRow {
+    display: flex;
+  
+  }
+  
+  .column label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 4px;
+  }
+  
+  .column span {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.5;
+  }
+  
+  /* Optional: Visual separation between columns */
+  .column:not(:last-child) {
+    border-right: 1px solid #ddd;
+  }
+  
+  .commentIconColumn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    color: #4b6cb7 !important;
+    cursor: pointer;
+    font-size: 18px;
+    transition: transform 0.2s ease;
+  }
+  
+  .commentIconColumn:hover {
+    transform: scale(1.2);
+    color: #182848 !important;
+  }
+  
+  .releaseList {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    padding: 16px 0;
+  }
+  
+  .releaseCard {
+    background: linear-gradient(145deg, #ffffff, #f4f6fb);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.06);
+    cursor: pointer;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    border-left: 6px solid #4b6cb7;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 180px;
+  }
+  
+  .releaseCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 20px rgba(75, 108, 183, 0.15);
+    background-color: #f9fafe;
+  }
+  
+  .releaseTitle {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #2c3e50;
+  }
+  
+  .releaseDescription {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.4;
+    flex-grow: 1;
+  }
+  
+  .emptyMessage {
+    text-align: center;
+    font-size: 16px;
+    color: #999;
+    padding: 80px 0;
+  }
+  
+  .topRightIcons {
+    position: absolute;
+    top: 82px;
+    right: 30px;
+    z-index: 10;
+  }
+  
+  .addIcon {
+    font-size: 26px;
+    color: #28a745;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  
+  .addIcon:hover {
+    transform: scale(1.2);
+    color: #218838;
+  }
+  
+  @media (min-width: 1024px) {
+    .releaseList {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  
+  .businessHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  
+  .businessHeaderIcon {
+    font-size: 22px;
+    color: #007bff;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  
+  .businessHeaderIcon:hover {
+    transform: scale(1.2);
+    color: #0056b3;
+  }
+  

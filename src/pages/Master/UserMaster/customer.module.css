@@ -1,0 +1,46 @@
+.botton{
+    margin-left:4px;
+    margin-top:2px;
+}
+.monthlyform{
+    margin-top: 8em;
+
+}
+
+.title{
+    text-align: center;
+    background-color: #151B54;
+}
+
+.shRow{
+    overflow: hidden; 
+}
+
+.shCol{
+    margin-bottom: -99999px;
+    padding-bottom: 99999px;
+}
+
+.tableCon{
+    margin-top: 2em;
+}
+
+.formCon{
+    width:100%;
+}
+.btn{
+    margin-left: 0.2em;
+    width:max-content;
+    display: flex;
+    margin-top:px;
+}
+
+.buttCon{
+    margin-left: .2em;
+    margin-bottom: .5em;
+    
+}
+.modal{
+    max-width: none !important;
+    min-width: 90%;   /* Occupy the 90% of the screen width */
+}

@@ -1,0 +1,688 @@
+.centerWrapper {
+  width: 80%;
+  height: 90vh;
+  margin: 30px auto;
+  background: whitesmoke;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  font-family: "Inter", sans-serif;
+  /* top:0;
+  overflow-y: auto;  */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+}
+
+/* HEADER */
+.centerHeader {
+  background: #0B63CE;
+  color: white;
+  padding: 14px 20px;
+  font-size: 20px;
+  font-weight: 600;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 10px 10px 0 0;
+  padding-top: 20px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.headerIcons {
+  display: flex;
+  gap: 12px;
+}
+
+.headerBtn {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+/* BODY */
+.centerBody {
+  padding-top: 20px;
+  overflow: hidden;
+}
+
+.labelTitle {
+  margin-bottom: 8px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.customTextarea {
+  width: 100%;
+  height: 310px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  resize: none;
+  font-size: 14px;
+  overflow-y: auto;
+}
+
+/* STATUS + DOWNLOAD BUTTON */
+.statusContainer {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statusRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.statusDropdown {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #aaa;
+}
+
+.downloadBtnRight {
+  background: #0B63CE;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* POPUP */
+.popupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.popupCard {
+  background: whitesmoke;
+  width: 380px;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.popupTitle {
+  margin-bottom: 15px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.popupLabel {
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.popupSelect,
+.popupFile {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #bbb;
+}
+
+.popupActions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.cancelBtn,
+.submitBtn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+
+.cancelBtn {
+  background: #888;
+}
+
+.submitBtn {
+  background: #0B63CE;
+}
+
+.mainWrapper {
+  position: relative;
+}
+
+/* BACK BUTTON */
+.backBtn {
+  position: absolute;
+  top: 20px;
+  left: 15px;
+  background: #3bb44a;
+  /* green like your image */
+  color: white;
+  border: none;
+  padding: 10px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+  z-index: 10;
+}
+
+.backBtn:hover {
+  background: #2c9a3a;
+}
+
+/* Chat Popup */
+.chatPopup {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  /* width: 320px;
+    height: 420px; */
+  width: 400px;
+  height: 500px;
+
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+  z-index: 99999;
+  /* VERY IMPORTANT */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chatOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.chatBox {
+  background: white;
+  width: 400px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+}
+
+.chatHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f5f5f5;
+  padding: 12px 16px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.closeIcon {
+  cursor: pointer;
+  color: #444;
+  font-size: 1.1rem;
+}
+
+.chatContent {
+  padding: 16px;
+  flex: 1;
+}
+
+.chatInput {
+  width: 96%;
+  height: 80px;
+  margin-top: 10px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  resize: none;
+}
+
+.chatFooter {
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 16px;
+  background: #f5f5f5;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.downloadBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #e63946;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.downloadBtn:hover {
+  background: #d62828;
+}
+
+.chatHeader {
+  background: #49a6e4;
+  color: #fff;
+  padding: 10px 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chatHeader h4 {
+  font-size: 16px;
+  margin: 0;
+}
+
+.closeIcon {
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.chatBody {
+  flex: 1;
+  padding: 10px;
+  background: #ece5dd;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.userMessage {
+  align-self: flex-end;
+  background: #dcf8c6;
+  padding: 8px 12px;
+  border-radius: 10px 10px 0 10px;
+  max-width: 80%;
+}
+
+.botMessage {
+  align-self: flex-start;
+  background: #fff;
+  padding: 8px 12px;
+  border-radius: 10px 10px 10px 0;
+  max-width: 80%;
+}
+
+.chatInputArea {
+  display: flex;
+  align-items: center;
+  background: #f0f0f0;
+  padding: 8px;
+  gap: 8px;
+  border-top: 1px solid #ddd;
+}
+
+.chatInputArea input {
+  flex: 1;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 15px;
+  outline: none;
+}
+
+.chatInputArea button {
+  background: #49a6e4;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* === Modern Quick Question Pills === */
+.quickQuestionBar {
+  background: #f9f9f9;
+  border-top: 1px solid #e0e0e0;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.quickScroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.quickScroll::-webkit-scrollbar {
+  display: none;
+  /* Chrome/Safari */
+}
+
+.questionPill {
+  flex-shrink: 0;
+  background: #ffffff;
+  border: 1px solid #dcdcdc;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+  color: #49a6e4;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  white-space: nowrap;
+}
+
+.questionPill:hover {
+  background: #e8f5e9;
+  border-color: #b2dfdb;
+  transform: translateY(-1px);
+}
+
+.chatActions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  /* ? adds space between Save, Download, and Close icons */
+}
+
+.commentButtons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.downloadIcon {
+  font-size: 20px;
+  color: #007bff;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.downloadIcon:hover {
+  transform: scale(1.1);
+  color: #0056b3;
+}
+
+/* comment section */
+.descActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.iconGroup {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.upArrowIcon,
+.commentIcon {
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: color 0.3s, transform 0.3s;
+  color: #00bcd4;
+}
+
+.upArrowIcon:hover,
+.commentIcon:hover {
+  color: #115e68;
+  transform: translateY(-2px);
+}
+
+.descActions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.iconGroup {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.upArrowIcon,
+.commentIcon {
+  font-size: 1.3rem;
+  cursor: pointer;
+  transition: color 0.3s, transform 0.3s;
+  color: #00bcd4;
+}
+
+.upArrowIcon:hover,
+.commentIcon:hover {
+  color: #115e68;
+  transform: translateY(-2px);
+}
+
+/* --- POPUP OVERLAY & CARD (Existing structure) --- */
+
+.popupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Semi-transparent backdrop */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100000;
+}
+
+.popupCard {
+  background-color: whitesmoke;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  /* Soft, professional shadow */
+  padding: 30px;
+  width: 100%;
+  max-width: 500px;
+  /* Standard modal width */
+  animation: fadeIn 0.3s ease-out;
+}
+
+.popupTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #eeeeee;
+  padding-bottom: 10px;
+}
+
+.popupLabel {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #555555;
+  margin-bottom: 8px;
+  margin-top: 15px;
+}
+
+/* --- TABLE STYLES --- */
+
+.popupTable {
+  width: 100%;
+  border-collapse: collapse;
+  /* Clean borders */
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+  border: 1px solid #dddddd;
+  /* Overall subtle border */
+  border-radius: 4px;
+  overflow: hidden;
+  /* Ensures border-radius applies nicely */
+}
+
+.popupTableHeader {
+  background-color: #f4f7f9;
+  /* Light, neutral header background */
+  color: #333333;
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 15px;
+  border-bottom: 1px solid #dddddd;
+}
+
+.popupTableCell {
+  padding: 12px 15px;
+  border-bottom: 1px solid #eeeeee;
+  /* Subtle row separator */
+  color: #555555;
+}
+
+.popupTable tbody tr:last-child .popupTableCell {
+  border-bottom: none;
+  /* Remove border from last row */
+}
+
+.popupTable tbody tr:hover {
+  background-color: #f9f9f9;
+  /* Light hover effect for usability */
+}
+
+.popupTableCellAction {
+  text-align: center;
+  width: 100px;
+  /* Fixed width for the action column */
+}
+
+/* --- ACTION BUTTON (Download Icon) --- */
+
+.downloadIconBtn {
+  background: lightblue;
+  border: none;
+  /* background-color: #0b2b4e; Primary color for action */
+  cursor: pointer;
+  padding: 5px;
+  font-size: 1.2rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.downloadIconBtn:hover {
+  color: #0056b3;
+  transform: scale(1.1);
+  /* Slight animation on hover */
+}
+
+/* --- FOOTER ACTIONS (Cancel Button) --- */
+
+.popupActions {
+  display: flex;
+  justify-content: flex-end;
+  /* Push button to the right */
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.cancelBtn {
+  padding: 10px 20px;
+  border: 1px solid #916767;
+  border-radius: 4px;
+  background-color: #69abf1;
+  color: #333;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancelBtn:hover {
+  background-color: #f1f1f1;
+  color: #333333;
+}
+
+
+.scrollBox {
+  /* max-height: 100px; */
+  overflow-y: auto;
+  height: 100%;
+  /* padding-right: 8px; */
+  margin-bottom: 12px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 20px;
+  padding-right: 12px;
+}
+
+
+/* .scrollBox::-webkit-scrollbar {
+    width: 6px;
+}  */
+.sectionTitle {
+  font-size: 1.3rem;
+  font-weight: 600;
+
+  margin-bottom: 20px;
+  margin-top: 10px;
+}
+
+.deleteMsg {
+  color: red;
+
+}
+
+.msgHeader {
+  /* display: flex;
+  justify-content: space-between; */
+  font-size: 11px;
+
+}
+
+.msgText {
+  font-size: 14px;
+}
+
+.msgTime {
+  /* opacity: 0.7; */
+  font-size: 14px;
+}
+
+.customLabel {
+  display: block;
+  padding: 8px;
+  line-height: 1.5;
+  margin-bottom: 15px;
+  /* overflow-y: auto; */
+  /* max-height: 100px; */
+
+  /* text-align: left; */
+}

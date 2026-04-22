@@ -1,0 +1,51 @@
+/* .backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 20;
+    background-color: rgba(0, 0, 0, 0.75);
+   
+  } */
+
+  .backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.75); /* slightly lighter black */
+  }
+  
+  
+  .modal {
+    position: fixed;
+    left: 22.5%;
+   /* background-color: #cfcfcf;
+    width: 60%;
+     padding: 1rem;  */
+    border-radius: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    z-index: 1000;
+    animation: slide-down 300ms ease-out forwards;
+    margin :5vh auto 0em auto;
+    max-height: 560px;
+   
+    
+  
+   
+  }
+  
+/* New Style  */
+.modal {
+  scrollbar-width: 100px; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
+@media only screen and (max-width: 600px) {
+  .modal {
+    width: 90%;
+    left: 5%;
+      max-height: 680px;
+  }
+}

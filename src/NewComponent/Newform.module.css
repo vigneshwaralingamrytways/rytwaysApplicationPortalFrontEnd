@@ -1,0 +1,64 @@
+.btn{
+    margin-right: 1.5em; /* changed */
+    width:max-content;
+    display: flex;
+    margin: top 20px; /* changed */
+}
+.formcon{
+    width: 100%;
+    height:max-content;
+    display:flex;
+    padding:1em;   
+ /* background-color: #E6E6E6; */
+ background-color: transparent;  
+   
+    
+}
+.header{
+    text-align: center;
+}
+.formholder{
+    width: 100%;
+    padding:0%;
+    height:fit-content;
+    display:flex;
+    margin:0%;
+    
+    
+   
+}
+
+.label{
+    height:38px;
+}
+
+.btnextra{
+    margin-top: 30px;
+}
+
+.title{
+    text-align: center;
+    background-color: #170462;
+    color: aliceblue;
+width: 100%;
+}
+
+/*    New Style */
+.formBorder {
+    border: none;
+    border-bottom: 1px solid black; 
+   
+    outline: none;
+  margin-bottom: 30px;
+    border-radius: 0%;
+    background-color: #d1e70300;
+    
+  }
+  
+  .formBorder:focus {
+    border: none;
+    border-bottom: 1px solid rgb(119, 118, 117);
+    background-color: #98a33000; /* You can change this color as needed */
+  }
+
+  

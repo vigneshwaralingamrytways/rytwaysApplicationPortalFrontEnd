@@ -1,0 +1,153 @@
+.table-container-3d {
+    padding: 2rem;
+    background: linear-gradient(to bottom, #1c1c1e, #2c2c2e);
+    min-height: 100vh;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .table-title {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #00ffff;
+    text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+  }
+  
+  .table-scroll-container {
+    width: 100%;
+    overflow-x: auto; /* Enables horizontal scrolling */
+    -webkit-overflow-scrolling: touch; /* For smoother scrolling on mobile devices */
+  }
+  
+  .table-header-container {
+    width: 100%;
+    overflow-x: auto; /* Ensures header is scrollable */
+  }
+  
+  .table-3d {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-width: 1000px; /* Ensure there's enough width for content */
+    perspective: 1000px;
+  }
+  
+  .table-header {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Dynamically adjusts column width */
+    background: #3a3d41;
+    font-weight: bold;
+    color: #00ffff;
+    text-shadow: 0 0 5px #00ffff99;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+  }
+  
+  .table-body {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Dynamically adjusts column width */
+    background: #292b2f;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    transform: rotateX(3deg);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .table-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Same as header */
+  }
+  
+  .table-row:hover {
+    transform: rotateX(0deg) scale(1.01);
+    box-shadow: 0 12px 24px rgba(0, 255, 255, 0.3);
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  
+  .pagination button {
+    background: #00ffff;
+    color: #1c1c1e;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 5px;
+    margin: 0 0.25rem;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .pagination button:hover {
+    background: #1c1c1e;
+    color: #00ffff;
+  }
+  
+  .pageNumber {
+    color: #fff;
+    font-weight: bold;
+    padding: 0.5rem;
+  }
+  
+  /* Add responsive design for dynamic columns */
+  @media (max-width: 768px) {
+    .table-header,
+    .table-row {
+      grid-template-columns: repeat(4, 1fr); /* Adjust for smaller screens */
+      grid-template-rows: repeat(2, auto);
+    }
+  
+    .table-header > div,
+    .table-row > div {
+      padding: 0.5rem 0;
+    }
+  
+    .pagination {
+      flex-direction: column;
+    }
+  
+    .pagination button {
+      margin: 0.25rem 0;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .table-title {
+      font-size: 1.5rem;
+    }
+  
+    .table-header,
+    .table-row {
+      grid-template-columns: 1fr;
+    }
+  
+    .table-header > div,
+    .table-row > div {
+      padding: 0.5rem;
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .table-3d {
+      max-width: 1200px;
+    }
+  
+    .table-header,
+    .table-row {
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Ensure enough space for columns */
+    }
+  }
+  
+  .table-header > div,
+  .table-row > div {
+    min-width: 150px; /* Adjust column widths as needed */
+    white-space: nowrap; /* Prevent wrapping inside columns */
+  }
+  

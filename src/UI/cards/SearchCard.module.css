@@ -1,0 +1,99 @@
+.card{
+    margin : 1rem 2rem 2rem 2em;
+    box-shadow: 0px 0px 0px 0px rgb(190, 190, 190);
+    max-width: 100%;
+    max-height: fit-content;
+     background-color: transparent; 
+    
+     box-shadow: 0 1px 1px rgba(0,0,0,0.08), 0 2px 2px rgba(0,0,0,0.12), 0 4px 4px rgba(0,0,0,0.16), 0 8px 8px rgba(0,0,0,0.20);
+    }
+    
+    .cardHeader{
+        max-height: max-content;
+      /*   background: #22301d; */
+        color: aliceblue;
+        background-color: #01495e;
+    }
+    .cardBody{
+        padding: 0em;
+     /* background-color: #E6E6E6; 
+     background-color: #E8F7F2; */
+     background-color: #ffffff;
+      
+        
+        
+    }
+.addButton{
+align-content: right;
+display: flex;
+flex-wrap: wrap;
+text-size-adjust: 8px;
+margin-right: 1em;
+}
+
+.icon{
+    height: 12px;
+    padding-left: 6px;
+    }
+
+.container{
+    padding-left: 8px;
+    margin-left: 8px;
+    margin-right: 1rem;
+    padding-right: 0;
+    width:100%
+}
+
+.heading{
+    text-align: left;
+    padding-left: 0%;
+    width: 100%;
+    display: inline-block;
+}
+
+.botton{
+    margin-left:4px;
+    margin-top:2px;
+}
+.monthlyform{
+    margin-top: 8em;
+
+}
+
+.title{
+    text-align: center;
+    background-color: aquamarine;
+}
+
+.shRow{
+    overflow: hidden; 
+}
+
+.shCol{
+    margin-bottom: -99999px;
+    padding-bottom: 99999px;
+}
+
+.tableCon{
+    margin-top: 2em;
+}
+
+.formCon{
+    width:100%;
+}
+.btn{
+    margin-left: 0.2em;
+    width:max-content;
+    display: flex;
+    margin-top:px;
+}
+
+.buttCon{
+    margin-left: .2em;
+    margin-bottom: .5em;
+    
+}
+.modal{
+    max-width: none !important;
+    min-width: 90%;   /* Occupy the 90% of the screen width */
+}
