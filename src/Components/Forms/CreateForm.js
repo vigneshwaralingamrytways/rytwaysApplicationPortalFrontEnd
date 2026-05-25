@@ -632,12 +632,14 @@ const renderFields = (
                     <Form.Group key={name} className={horizontal ? classes.horizontal : undefined}>
                       <Form.Label htmlFor={name} className={horizontal ? classes.horizontallabel : undefined} style={{ whiteSpace: horizontal ? "wrap" : "normal", minWidth: horizontal ? "210px" : "auto" }}>{title}</Form.Label>
                       <DatePicker
-                        selected={watch(name) /* || new Date() */} // Use the selected value or default to current date
+                        selected={watch(name) ? new Date(watch(name)) : null  /* || new Date() */} // Use the selected value or default to current date
                         onChange={(date) => setValue(name, date, { shouldValidate: true })}
                         showTimeSelect
                         timeIntervals={15}
                         dateFormat="yyyy-MM-dd HH:mm"
-                        className={dynamicclassname ? `${classes[dynamicclassname]}` : horizontal ? `${classes.horizontalText}` : classes.formBorder}
+                        // className={dynamicclassname ? `${classes[dynamicclassname]}` : horizontal ? `${classes.horizontalText}` : classes.formBorder}
+                        className={`form-control ${dynamicclassname ? classes[dynamicclassname] : horizontal ? classes.horizontalText : classes.formBorder}`}
+                        wrapperClassName="d-block w-100"
                       />
                       {errors[name] && (
                         <Form.Text className="text-danger">

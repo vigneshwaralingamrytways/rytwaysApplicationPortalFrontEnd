@@ -33,6 +33,7 @@ const DailyEmpAttendence = () => {
         loadMyAttendance();
     }, [loadMyAttendance]);
 
+    
     return (
         <div className={classes.container}>
 

@@ -378,7 +378,7 @@ const ManageTicket = (props) => {
             }));
 
             setActiveForm(
-                <Popupcard title="Activity Log" onClose={closeSlide}
+                <Popupcard title="Activity Log" showBack onBack={closeSlide}
                 >
                     <NewTable
                         cols={ViewActivityLogTable()}

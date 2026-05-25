@@ -55,37 +55,67 @@ const MakePaymentPurchaseTable = (showFormHandler, actions) => [
   {
     title: "Paid ",
     align: "right",
-    val: "cumulativePaidAmount",
-    render: (row) => <span>{row.makePayment?.cumulativePaidAmount || 0}</span>
+    val: "paid",
+    render: (row) => <span>{row.paymentDetails?.utilizedAmount || 0}</span>
   },
   {
     title: "Balance ",
     align: "right",
     val: "balanceAmount",
-    // render: (row) => <span>{row.makePayment?.balanceAmount || row.paymentDetails?.balanceAmount || 0}</span>
-  
-  
-    render: (row) => {
-      const paidAmount = row.makePayment?.cumulativePaidAmount || 0;
+    render: (row) => <span>{ row.paymentDetails?.balanceAmount || 0}</span>
 
-      return (
-        <span>
-          {paidAmount > 0
-            ? row.makePayment?.balanceAmount ?? 0
-            : row.paymentDetails?.balanceAmount ?? 0}
-        </span>
-      );
-    }
-  
-  
+
+    // render: (row) => {
+    //   const paidAmount = row.makePayment?.cumulativePaidAmount || 0;
+
+    //   return (
+    //     <span>
+    //       {paidAmount > 0
+    //         ? row.makePayment?.balanceAmount ?? 0
+    //         : row.paymentDetails?.balanceAmount ?? 0}
+    //     </span>
+    //   );
+    // }
+
+
   },
 
   {
-      title: "Status",
-      align: "right",
-      val: "status",
-      render: (row) => <span>{row.invoiceHeader?.status?.statusName||"Not Recived"}</span>,
-    },
+    title: "Status",
+    align: "right",
+    val: "status",
+    // render: (row) => <span>{row.invoiceHeader?.status?.statusName||"Not Recived"}</span>,
+
+
+    render: (row) => {
+      const statusName = row.invoiceHeader?.status?.statusName || "NOT PAID";
+
+      let statusColor = "";
+      if (statusName === 'PAID') {
+        statusColor = "green";
+      } else if (statusName === 'NOT PAID') {
+        statusColor = "red";
+      } else if (statusName === 'PARTLY PAID') {
+        statusColor = "yellow";
+      }
+
+      return (
+        <div style={{
+          backgroundColor: statusColor,
+          color: "black",
+          fontWeight: "700",
+          fontSize: "12px",
+          padding: "4px 10px",
+          borderRadius: "6px",
+          textAlign: "center",
+          display: "inline-block",
+          minWidth: "100px"
+        }}>
+          {statusName}
+        </div>
+      );
+    }
+  },
   //  {
   //         title: "Status",
   //         align: "right",

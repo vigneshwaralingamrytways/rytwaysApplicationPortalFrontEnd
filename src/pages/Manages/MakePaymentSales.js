@@ -11,7 +11,7 @@ import {
     Popupcard,
 } from "../../Components/CommonImports/CommonImports";
 import NewTable from "../../Components/NewTable/NewTable";
- 
+
 import SalesPaymentReconsile from "./SalesPaymentReconsile";
 
 import MakePaymentSalesTable from "./MakePaymentSalesTable";
@@ -245,7 +245,7 @@ const MakePaymentSales = () => {
     }
     const savepayment = async (payment) => {
         let result;
-console.log("===makepayment",payment)
+        console.log("===makepayment", payment)
         if (payment.id) {
             result = await post(api + "/payment/update/" + payment.id, payment);
         } else {
@@ -316,7 +316,7 @@ console.log("===makepayment",payment)
                 <SalesPaymentReconsile
                     payment={payment}
                     savepayment={savepayment}
-                     templatePayement={templatePayement}
+                    templatePayement={templatePayement}
                     onPaymentSaved={loadSaless}
                     onClose={closeSlide}
 
@@ -325,42 +325,66 @@ console.log("===makepayment",payment)
             setIsSlideOpen(true);
         }
     };
+    const onSubmit = async (values) => {
+        const searchPayload = {
+            fromDate: values.fromDate || null,
+            toDate: values.toDate || null,
+            customerId: values.customerId || null,
+            type: "SALES"
+        };
 
-    function onSubmit(values) {
-        console.log("Search/filter values:", values);
-
-        const { fromDate, toDate, customerId } = values;
-        if (!fromDate && !toDate && !customerId) {
-            setSaless(allSales);
-            return;
+        const result = await post(api + "/invoiceHeader/search", searchPayload);
+         console.log(" res for filt",result)
+        if (response.ok) {
+            setSaless(result || []);
+        } else {
+            setSaless([]);
+            // AlertHandler("Search failed", "danger");
         }
+    };
 
-        const filtered = allSales.filter((item) => {
-            const header = item.invoiceHeader || {};
-            const itemCustomerId = header.customerId || header.customer?.customerId;
-            const customerMatch = customerId
-                ? String(itemCustomerId) === String(customerId)
-                : true;
+    // const onSubmit = (values) => {
+    //     const { fromDate, toDate, customerId } = values;
 
-            let dateMatch = true;
-            if (header.invoiceDate) {
-                const itemDate = new Date(header.invoiceDate).setHours(0, 0, 0, 0);
-                const from = fromDate ? new Date(fromDate).setHours(0, 0, 0, 0) : null;
-                const to = toDate ? new Date(toDate).setHours(0, 0, 0, 0) : null;
+    //     if (!fromDate && !toDate && !customerId) {
+    //         setSaless(allSales);
+    //         return;
+    //     }
 
-                const isAfterFrom = from ? itemDate >= from : true;
-                const isBeforeTo = to ? itemDate <= to : true;
+    //     const filtered = allSales.filter((item) => {
+    //         const header = item.invoiceHeader ? item.invoiceHeader : item;
 
-                dateMatch = isAfterFrom && isBeforeTo;
-            } else if (fromDate || toDate) {
-                dateMatch = false;
-            }
+    //         const itemCustomerId =
+    //             header.customerId || header.customer?.customerId;
 
-            return customerMatch && dateMatch;
-        });
+    //         const customerMatch = customerId
+    //             ? String(itemCustomerId) === String(customerId)
+    //             : true;
 
-        setSaless(filtered);
-    }
+    //         let dateMatch = true;
+    //         if (header.invoiceDate) {
+    //             const itemDate = new Date(header.invoiceDate).setHours(
+    //                 0,
+    //                 0,
+    //                 0,
+    //                 0
+    //             );
+    //             const from = fromDate
+    //                 ? new Date(fromDate).setHours(0, 0, 0, 0)
+    //                 : null;
+    //             const to = toDate
+    //                 ? new Date(toDate).setHours(0, 0, 0, 0)
+    //                 : null;
+
+    //             dateMatch =
+    //                 (!from || itemDate >= from) && (!to || itemDate <= to);
+    //         }
+
+    //         return customerMatch && dateMatch;
+    //     });
+
+    //     setSaless(filtered);
+    // };
 
 
 

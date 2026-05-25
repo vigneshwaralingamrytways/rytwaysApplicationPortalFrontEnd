@@ -37,51 +37,41 @@ const [statusList, setStatusList] = useState([]);
 const [categoryList, setCategoryList] = useState([]);
 const [subCategoryList, setSubCategoryList] = useState([]);
 const loadCategories = useCallback(async () => {
-  // const result = await get(api + "/Expense/getCategories");
+  const result = await get(api + "/Expense/getCategories");
 
-  // if (response.ok) {
-  //   setCategoryList(
-  //     result.map(item => ({
-  //       value: item.id,
-  //       label: item.name
-  //     }))
-  //   );
-  // } else {
-  //   // AlertHandler("Failed to load categories", "danger");
-  // }
-  setCategoryList(
-    dummycat.map(item => ({
-      value: item.id,
-      label: item.name
-    }))
-  );
+  if (response.ok) {
+    setCategoryList(
+      result.map(item => ({
+        value: item.id,
+        label: item.name
+      }))
+    );
+  } else {
+    // AlertHandler("Failed to load categories", "danger");
+  }
+  
 
 }, [get, response]);
 
 const loadSubCategories = useCallback(async () => {
-  // const result = await get(api + "/Expense/getSubCategories");
+  const result = await get(api + "/Expense/getSubCategories");
 
-  // if (response.ok) {
-  //   setSubCategoryList(
-  //     result.map(item => ({
-  //       value: item.id,
-  //       label: item.name
-  //     }))
-  //   );
-  // } else {
-  //   // AlertHandler("Failed to load sub categories", "danger");
-  // }
+  if (response.ok) {
+    setSubCategoryList(
+      result.map(item => ({
+        value: item.id,
+        label: item.name
+      }))
+    );
+  } else {
+    // AlertHandler("Failed to load sub categories", "danger");
+  }
 
- setSubCategoryList(
-    dummysubcat.map(item => ({
-      value: item.id,
-      label: item.name
-    }))
-  );
+  
 
-// }, [get, response]);
+}, [get, response]);
 
-}, []);
+// }, []);
 
 
 useEffect(() => {
@@ -191,82 +181,22 @@ const template = {
     },
   ],
 };
-///dummy datas
-
-
-const dummycat=[
-  {
-   
-    name:"food"
-  },
-  {
-   
-    name:"education"
-  }
-]
-
-const dummysubcat=[
-
-   {
-   
-    name:"hotel"
-  },
-  {
-  
-    name:"college"
-  }
-];
-
-
-const dummyStatuses = [
-  { name: "Pending" },
-  {  name: "Approved" },
-  {  name: "Rejected" },
-];
-
-const dummyExpenses = [
-  {
-   
-    expenseDate: "2025-01-12",
-    expenseCategory: "fees",
-    expenseSubCategory:"college fees",
-    expenseAmount: "250",
-    remarks: "colege fes",
-    status:  "Pending",
-  },
-  {
-  
-    expenseDate: "2025-01-15",
-    expenseCategory: "food",
-    expenseSubCategory: "outside food",
-    expenseAmount: "150",
-    remarks: "hotel foods",
-    status:  "Pending",
-  },
-];
-
+ 
 
 const loadStatuses = useCallback(async () => {
-  // const data = await get(api + "/Expense/getStatuses");
+  const data = await get(api + "/Expense/getStatuses");
 
-  // if (response.ok) {
-  //   setStatusList(
-  //     data.map((item) => ({
-  //       value: item.id,
-  //       label: item.name
-  //     }))
-  //   );
-  // } else {
-  //   // AlertHandler("Failed to load status list", "danger");
-  // }
-
- setStatusList(
-    dummyStatuses.map(item => ({
-      value: item.id,
-      label: item.name
-    }))
-  );
-
+  if (response.ok) {
+    setStatusList(
+      data.map((item) => ({
+        value: item.id,
+        label: item.name
+      }))
+    );
+  } else {
+    // AlertHandler("Failed to load status list", "danger");
+  }
+ 
 
   
 // }, [get, response]);
@@ -285,19 +215,19 @@ useEffect(() => {
 
    //load Expense from db
     const loadExpenses = useCallback(async () => {
-        // const allcountries = await get(api + "/Expense/getall");
-                // const allExpenses = await get(api + "/Expense/getall");
+        const allcountries = await get(api + "/Expense/getall");
+                const allExpenses = await get(api + "/Expense/getall");
 
-        // console.log("all Expense:",allExpenses)
-        // setExpense(allcountries);
-        // if (response.ok) {
-        //     setExpense(allExpenses);
+        console.log("all Expense:",allExpenses)
+        setExpense(allcountries);
+        if (response.ok) {
+            setExpense(allExpenses);
 
-        // } else {
-        //     console.log("res++>"+response);
-        //     // AlertHandler("failed to get the Expense", "danger")
-        // }
-setExpense(dummyExpenses);
+        } else {
+            console.log("res++>"+response);
+            // AlertHandler("failed to get the Expense", "danger")
+        }
+ 
 
 
 

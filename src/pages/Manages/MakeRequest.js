@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 
 import {
   api,
@@ -7,6 +7,7 @@ import {
   useDispatch,
   useSelector,
   classes,
+  AuthContext,
 } from "../../Components/CommonImports/CommonImports";
 
 import NewTable from "../../Components/NewTable/NewTable";
@@ -16,7 +17,9 @@ import RequestTable from "./RequestTable";
 const MakeRequest = (props) => {
   const { get, del, post, response } = useFetch({ data: [] });
   const dispatch = useDispatch();
-
+  const authCtx = useContext(AuthContext)
+  const uId = authCtx.userId
+  const isAdmin = authCtx.roleId=="1"
   const [Request, setRequest] = useState([]);
   const [defaultValues, setDefaultValues] = useState({});
   const [originalData, setOriginalData] = useState([]);
@@ -75,6 +78,14 @@ const MakeRequest = (props) => {
         contains: "date",
         validationProps: "From Date is required",
         dynamic: { field: "requestType", value: "leave" },
+        validate: (value, formValues) => {
+          if (formValues.requestType === "leave") {
+            if (!value) return "From Date is required for leave";
+            if (formValues.requestDate && value < formValues.requestDate) return "From Date cannot be less than Request Date";
+            if (formValues.toDate && value > formValues.toDate) return "From Date cannot be greater than To Date";
+          }
+          return true;
+        }
       },
       {
         inpprops: {},
@@ -82,9 +93,16 @@ const MakeRequest = (props) => {
         type: "date",
         name: "toDate",
         contains: "date",
-       
+
         validationProps: "To Date is required",
         dynamic: { field: "requestType", value: "leave" },
+        validate: (value, formValues) => {
+          if (formValues.requestType === "leave") {
+            if (!value) return "To Date is required for leave";
+            if (formValues.fromDate && value < formValues.fromDate) return "To Date cannot be before From Date";
+          }
+          return true;
+        }
       },
       {
         inpprops: {},
@@ -157,7 +175,14 @@ const MakeRequest = (props) => {
   /* ---------------- LOAD REQUESTS ---------------- */
 
   const loadRequests = useCallback(async () => {
-    const allRequests = await get(api + "/makeRequest/getall");
+    let allRequests
+    if (isAdmin) {
+      allRequests = await get(api + "/makeRequest/getall");
+    } else {
+      allRequests = await get(api + "/makeRequest/getByUserName/" + uId);
+
+
+    }
 
     if (response.ok) {
       setRequest(allRequests);
@@ -173,9 +198,13 @@ const MakeRequest = (props) => {
 
   const saveRequest = async (val) => {
     if (val.requestId) {
+      const values = {
+        ...val,
+        userId: authCtx.userId
+      }
       const updateRequest = await post(
         api + "/makeRequest/update/" + val.requestId,
-        val
+        values
       );
 
       if (response.ok) {
@@ -193,9 +222,14 @@ const MakeRequest = (props) => {
         AlertHandler("Updation failed", "danger");
       }
     } else {
-      const newRequest = await post(api + "/makeRequest/create", val);
-
-      if (newRequest) {
+      const values = {
+        ...val,
+        userId: authCtx.userId
+      }
+      const newRequest = await post(api + "/makeRequest/create", values);
+      console.log(" val for save req", values)
+      console.log(" res for the save req", newRequest)
+      if (response.ok) {
         AlertHandler("Request saved", "success");
         setRequest((prev) => [...prev, newRequest]);
 
@@ -210,7 +244,7 @@ const MakeRequest = (props) => {
   /* ---------------- DELETE ---------------- */
 
   const deleteRequest = async (requestId) => {
-    await del(api + "/makeRequest/delete/" + requestId);
+    const resDel = await del(api + "/makeRequest/delete/" + requestId);
 
     if (response.ok) {
       AlertHandler("Request deleted", "success");
@@ -240,6 +274,48 @@ const MakeRequest = (props) => {
     setActiveForm(null);
   };
 
+  const validateFormFields = (watchValues, { setError, clearErrors }) => {
+    const { requestType, fromDate, toDate, requestDate } = watchValues;
+    const todayStr = new Date().toISOString().split('T')[0];
+
+    clearErrors(["requestDate", "fromDate", "toDate"]);
+
+    if (requestDate && requestDate < todayStr) {
+      setError("requestDate", {
+        type: "manual",
+        message: "The Request Date Could Not Be Less Than Today",
+      });
+    }
+
+    if (requestType === "leave") {
+      if (!fromDate) {
+        setError("fromDate", {
+          type: "manual",
+          message: "From Date is required for leave",
+        });
+      }
+      if (!toDate) {
+        setError("toDate", {
+          type: "manual",
+          message: "To Date is required for leave",
+        });
+      }
+
+      if (fromDate && requestDate && fromDate < requestDate) {
+        setError("fromDate", {
+          type: "manual",
+          message: "From Date Could Not Be Less Than Request Date",
+        });
+      }
+
+      if (fromDate && toDate && fromDate > toDate) {
+        setError("fromDate", {
+          type: "manual",
+          message: "From Date Could Not Be Greater Than To Date",
+        });
+      }
+    }
+  };
   /* ---------------- SHOW FORM HANDLER ---------------- */
 
   const showFormHandler = (item, action) => () => {
@@ -260,7 +336,7 @@ const MakeRequest = (props) => {
           onCancel={closeSlide}
           saveRequest={saveRequest}
           template={template}
-          validate={() => { }}
+          validate={validateFormFields}
           rowWiseFields={4}
         />
       );
@@ -295,7 +371,7 @@ const MakeRequest = (props) => {
           handleAddClick={showFormHandler({}, "Add")}
           template={templateforfilter}
           rowwise={3}
-          validate={() => { }}
+          validate={validateFormFields}
           onSubmit={onSubmit}
           onCancel={props.onCancel}
           buttonName="Search"

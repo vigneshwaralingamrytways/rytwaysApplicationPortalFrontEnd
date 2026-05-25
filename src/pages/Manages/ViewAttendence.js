@@ -23,7 +23,7 @@ import {
     startOfMonth,
     endOfMonth,
 
-    
+
     min
 } from "date-fns";
 
@@ -142,8 +142,13 @@ const ViewAttendence = (props) => {
 
     const loadMarkattendence = useCallback(async () => {
         const data = await get(api + "/markAttendence/getall");
-        console.log("mark attendence", data)
-        return data
+        if (response.ok) {
+            console.log("mark attendence", data)
+            return data
+        }else{
+            return []
+        }
+
     }, [get]);
 
 
@@ -238,17 +243,17 @@ const ViewAttendence = (props) => {
 
     }
 
-   function onSubmit(values) {
-    if (!values || !values.month) return;
+    function onSubmit(values) {
+        if (!values || !values.month) return;
 
-    const selected = new Date(values.month);
+        const selected = new Date(values.month);
 
-    if (!isValid(selected)) return;
+        if (!isValid(selected)) return;
 
-    const monthYear = format(selected, "yyyy-MM");
+        const monthYear = format(selected, "yyyy-MM");
 
-    setSelectedMonth(monthYear);
-}
+        setSelectedMonth(monthYear);
+    }
 
 
     // const getDaysForMonth = (selectedMonth) => {
@@ -278,23 +283,23 @@ const ViewAttendence = (props) => {
     // };
 
 
-const getDaysForMonth = (selectedMonth) => {
-    const today = new Date();
-    const [year, month] = selectedMonth.split("-");
+    const getDaysForMonth = (selectedMonth) => {
+        const today = new Date();
+        const [year, month] = selectedMonth.split("-");
 
-    const monthStart = startOfMonth(new Date(year, month - 1));
-    const monthEnd = endOfMonth(monthStart);
+        const monthStart = startOfMonth(new Date(year, month - 1));
+        const monthEnd = endOfMonth(monthStart);
 
-    const endDate =
-        format(today, "yyyy-MM") === selectedMonth
-            ? today
-            : monthEnd;
+        const endDate =
+            format(today, "yyyy-MM") === selectedMonth
+                ? today
+                : monthEnd;
 
-    return eachDayOfInterval({
-        start: monthStart,
-        end: endDate,
-    });
-};
+        return eachDayOfInterval({
+            start: monthStart,
+            end: endDate,
+        });
+    };
 
 
 

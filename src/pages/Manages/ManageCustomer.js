@@ -254,25 +254,25 @@ const ManageCustomers = () => {
         name: "contactNo",
         contains: "text",
         // validationProps: "Contact No is required",
-        inpprops: {
-          pattern: {
-            value: /^[6-9]\d{9}$/,
-            message: "Invalid Mobile Number (10 digits starting with 6-9)"
-          },
-          maxlength: 10
-        },
+        // inpprops: {
+        //   pattern: {
+        //     value: /^[6-9]\d{9}$/,
+        //     message: "Invalid Mobile Number (10 digits starting with 6-9)"
+        //   },
+        //   maxlength: 10
+        // },
       },
       {
         title: "Email",
         type: "text",
         name: "email",
         // validationProps: "Email Id is required",
-        inpprops: {
-          pattern: {
-            value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-            message: "Invalid Email format"
-          }
-        },
+        // inpprops: {
+        //   pattern: {
+        //     value: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+        //     message: "Invalid Email format"
+        //   }
+        // },
       },
       {
         title: "Contact Person",
@@ -296,12 +296,12 @@ const ManageCustomers = () => {
         type: "text",
         name: "panNo",
         // validationProps: "PAN NO is required",
-        inpprops: {
-          pattern: {
-            value: /^[A-Z]{5}[0-9]{4}[A-Z]$/,
-            message: "Invalid PAN Format (e.g. ABCDE1234F)"
-          }
-        },
+        // inpprops: {
+        //   pattern: {
+        //     value: /^[A-Z]{5}[0-9]{4}[A-Z]$/,
+        //     message: "Invalid PAN Format (e.g. ABCDE1234F)"
+        //   }
+        // },
       }
     ],
   };

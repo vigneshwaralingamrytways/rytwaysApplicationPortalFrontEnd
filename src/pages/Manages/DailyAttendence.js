@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 // import NewPayment from "./NewPayment";
 import { format } from "date-fns";
 import Modal from 'react-bootstrap/Modal';
@@ -16,6 +16,7 @@ import {
     useSelector,
     classes,
     Popupcard,
+    AuthContext,
 } from "../../Components/CommonImports/CommonImports";
 // import attendenceNameMasterTable from "./attendenceNameMasterTable";
 // import attendenceCatagoryTable from './attendenceCatagoryTable';
@@ -25,6 +26,7 @@ import NewTable from "../../Components/NewTable/NewTable";
 
 
 import DailyAttendenceTable from "./DailyAttendenceTable";
+import { AiOutlineConsoleSql } from "react-icons/ai";
 
 
 
@@ -68,12 +70,16 @@ const DailyAttendence = (props) => {
 
     const { get, del, post, response, loading, error } = useFetch({ data: [] });
     const dispatch = useDispatch();
-
+    const authCtx = useContext(AuthContext)
+    const uId = authCtx.userId
+    const isAdmin = authCtx.roleId == "1"
+    const uName = authCtx.userName;
     const [attendence, setattendence] = useState([]);
     const [defaultValues, setDefaultValues] = useState({});
     const [statusList, setStatusList] = useState([]);
     const [openCalendar, setOpenCalendar] = useState(false);
     const [calendarData, setCalendarData] = useState([]);
+    const [attendanceData, setAttendanceData] = useState([]);
     const [originalData, setOriginalData] = useState([]);
 
 
@@ -148,19 +154,18 @@ const DailyAttendence = (props) => {
         fields: [
 
 
- {
-            title: "Employee Name",
-            type: "text",
-            name: "employeeName",
-        },
+            {
+                title: "Employee Name",
+                type: "text",
+                name: "employeeName",
+            },
 
         ]
     };
 
 
     const loadStatuses = useCallback(async () => {
-        const data = await get(api + "/attendence/getStatuses");
-
+        const data = await get(`${api}/attendence/getStatuses?ts=${Date.now()}`);
         if (response.ok) {
             setStatusList(
                 data.map((item) => ({
@@ -180,8 +185,8 @@ const DailyAttendence = (props) => {
 
     const loadDailyAttendance = useCallback(async () => {
         try {
-            const data = await get(api + "/markAttendence/getall");
-            const allEmployee = await get(api + "/manageEmployee/getall");
+            const data = await get(`${api}/markAttendence/getall?ts=${Date.now()}`);
+            const allEmployee = await get(`${api}/manageEmployee/getall?ts=${Date.now()}`);
             console.log("datas..", data)
             console.log("all epmyee datas..", allEmployee)
             if (!response.ok || !Array.isArray(data)) return;
@@ -227,7 +232,7 @@ const DailyAttendence = (props) => {
                 return {
                     employeeId: emp.employeeId,
                     employeeName: emp.employeeName,
-                    department: emp.department?.departmentName||"",
+                    department: emp.department?.departmentName || "",
                     attendance: formattedAttendance
                 };
             })
@@ -241,9 +246,7 @@ const DailyAttendence = (props) => {
         }
     }, [get]);
 
-    useEffect(() => {
-        loadDailyAttendance();
-    }, [loadDailyAttendance]);
+
 
 
     const saveattendence = async (val) => {
@@ -335,27 +338,27 @@ const DailyAttendence = (props) => {
         // }
     }
 
-   function onSubmit(values) {
-    console.log("Filter values:", values);
+    function onSubmit(values) {
+        console.log("Filter values:", values);
 
-    if (!values || !values.employeeName) {
-        setattendence(originalData);
-        return;
+        if (!values || !values.employeeName) {
+            setattendence(originalData);
+            return;
+        }
+
+        const searchText = values.employeeName.toLowerCase();
+
+        const filteredData = originalData.filter((item) =>
+            item.employeeName?.toLowerCase().includes(searchText)
+        );
+
+        if (filteredData.length > 0) {
+            setattendence(filteredData);
+        } else {
+            AlertHandler("No employee found", "warning");
+            setattendence([]);
+        }
     }
-
-    const searchText = values.employeeName.toLowerCase();
-
-    const filteredData = originalData.filter((item) =>
-        item.employeeName?.toLowerCase().includes(searchText)
-    );
-
-    if (filteredData.length > 0) {
-        setattendence(filteredData);
-    } else {
-        AlertHandler("No employee found", "warning");
-        setattendence([]);
-    }
-}
 
 
 
@@ -380,62 +383,111 @@ const DailyAttendence = (props) => {
 
 
     const tableTitle = "Daily Attendance ";
+    const loadMyAttendance = useCallback(async () => {
+        console.log(" called my atendence")
+        if (!uName) return;
+        try {
+            const data = await post(`${api}/manageEmployee/getAttendence?ts=${Date.now()}`, { personName: uName });
+            if (response.ok && Array.isArray(data)) {
+                const formatted = data.map((item, index) => ({
+                    id: index,
+                    date: item.markAttendanceDate,
+                    status: item.attendanceType?.attendenceTypeName?.toLowerCase() || "present"
+                }));
+                console.log(" res for my attendece", formatted)
+                setAttendanceData(formatted);
+                setCalendarData(formatted);
+            } else {
+                console.log(" res for my attendece is Empty")
+                setAttendanceData([]);
+                setCalendarData([]);
+            }
+        } catch (err) {
+            console.error("Personal dashboard fetch error stack:", err);
+            setAttendanceData([]);
+        }
+    }, [uName, post]);
+    useEffect(() => {
+        if (isAdmin) {
+            loadDailyAttendance();
+        } else {
+            loadMyAttendance();
+        }
+    }, [isAdmin]);
 
+    if (!isAdmin) {
+        return (
+            <div className={classes.container}>
+                <div style={{
+                    background: "white",
+                    padding: "20px",
+                    borderRadius: "12px",
+                    boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
+                    height: "85vh"
+                }}>
+                    <div style={{ marginBottom: "15px" }}>
+                        <h3 style={{ color: "#1976d2", fontWeight: "bold" }}>My Attendance Calendar</h3>
+                    </div>
+                    <Calender attendanceData={attendanceData} />
+                </div>
+            </div>
+        );
+    }
+    else {
+        return (
+            <div className={classes.container}>
 
-
-    return (
-        <div className={classes.container}>
-
-            {/* <Popupcard
+                {/* <Popupcard
                 title="Add attendence" 
 
             > */}
-            <NewTable
+                <NewTable
 
 
-                cols={DailyAttendenceTable({
-                    showFormHandler,
-                    actions,
-                    onCalendarClick: onCalendarClick
-                }
+                    cols={DailyAttendenceTable({
+                        showFormHandler,
+                        actions,
+                        onCalendarClick: onCalendarClick
+                    }
 
-                )}
-                data={attendence}
-                striped
+                    )}
+                    data={attendence}
+                    striped
 
-                rows={25}
-                title={tableTitle}
-                // showPlusCircle={true}
-                handleAddClick={showFormHandler({}, "Add")}
-                template={templateforfilter}
-                rowwise={rowWiseFields}
-                validate={validate}
-                onSubmit={onSubmit}
-                onCancel={props.onCancel}
-                buttonName="Search"
-                rowWise={4}
-            />
+                    rows={25}
+                    title={tableTitle}
+                    // showPlusCircle={true}
+                    handleAddClick={showFormHandler({}, "Add")}
+                    template={templateforfilter}
+                    rowwise={rowWiseFields}
+                    validate={validate}
+                    onSubmit={onSubmit}
+                    onCancel={props.onCancel}
+                    buttonName="Search"
+                    rowWise={4}
+                />
 
-            <Modal
-                show={openCalendar}
-                onHide={handleCalendarClose}>
-                <Modal.Header closeButton>
-                    <Modal.Title style={{ color: 'blue' }}>
-                        Attendance { }
-                    </Modal.Title>
-                </Modal.Header>
-                <Modal.Body style={{ padding: '10px' }}>
-                    {openCalendar && (
-                        <Calender attendanceData={calendarData} />
+                <Modal
+                    show={openCalendar}
+                    onHide={handleCalendarClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title style={{ color: 'blue' }}>
+                            Attendance { }
+                        </Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body style={{ padding: '10px' }}>
+                        {openCalendar && (
+                            <Calender attendanceData={calendarData} />
 
-                    )}  </Modal.Body>
-                <Modal.Footer>
-                    <Button onClick={handleCalendarClose}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </Modal>
-        </div>
-    )
+                        )}  </Modal.Body>
+                    <Modal.Footer>
+                        <Button onClick={handleCalendarClose}>
+                            Close
+                        </Button>
+                    </Modal.Footer>
+                </Modal>
+            </div>
+        )
+    }
 }
 export default DailyAttendence;

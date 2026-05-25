@@ -2,7 +2,7 @@
   "name": "costing",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://app.rytways.com:9080/RytwaysLive",
+  "homepage": "http://localhost:8083/RytwaysFrontEnd",
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
@@ -84,7 +84,7 @@
       "react-app/jest"
     ]
   },
-  "proxy": "http://app.rytways.com:9080/",
+  "proxy": "http://localhost:8083/",
   "browserslist": {
     "production": [
       ">0.2%",

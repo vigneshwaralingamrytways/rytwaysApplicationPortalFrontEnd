@@ -11,11 +11,28 @@ export default function AssignTicket({
   onClose,
   saveTicket,
   template,
-  validate,
+
 }) {
+
+  const validate = (watchValues, { setError, clearErrors }) => {
+    if (watchValues.assignedOnTime) {
+      const assignedTime = new Date(watchValues.assignedOnTime).getTime();
+      const currentTime = new Date().getTime();
+
+      if (assignedTime < currentTime) {
+        setError("assignedOnTime", {
+          type: "manual",
+          message: "Assignment Time cannot be in the past",
+        });
+      } else {
+        clearErrors("assignedOnTime");
+      }
+    }
+    return true;
+  };
   return (
     <div className={classes.container}>
-      <Popupcard title={"Assign Ticket"}  showBack onBack={onCancel}>
+      <Popupcard title={"Assign Ticket"} showBack onBack={onCancel}>
         <CreateForm
           template={template}
           rowwise={3}

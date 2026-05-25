@@ -1,61 +1,71 @@
 
 import React from "react";
 import * as FaIcons from "react-icons/fa";
+const TicketTable = (showFormHandler, actions, lists) => {
+    const { ticketType, issueType, customerList } = lists || {};
 
-const TicketTable = (showFormHandler, actions, isManage) => {
     return [
-  {
+        {
             title: "Ticket No",
             align: "left",
             val: "ticketNo",
             render: (rowData) => {
 
-                return <span>{rowData?.ticketNo }</span>;
+                return <span>{rowData?.ticketNo}</span>;
             },
         },
         {
             title: "Customer Name",
             align: "left",
             val: "customerName",
-            render: (rowData) => <span>{rowData?.customer?.customerName || rowData?.customerName}</span>,
+            render: (rowData) => {
+                const customer = customerList?.find(c => c.value === rowData.customerId);
+                return <span>{customer?.label || rowData?.customerName}</span>;
+            }
         },
-      
+
         {
             title: "Ticket Description",
             align: "left",
             val: "ticketDescription",
-            render: (rowData) => <span>{rowData?.ticketDescription }</span>,
+            render: (rowData) => <span>{rowData?.ticketDescription}</span>,
         },
         {
             title: "Ticket Type",
             align: "left",
             val: "ticketTypeName",
-            render: (rowData) => <span>{rowData?.ticketType?.ticketTypeName }</span>,
+            render: (rowData) => {
+                const type = ticketType?.find(t => t.value === rowData.ticketTypeId);
+                return <span>{type?.label}</span>;
+            }
         },
         {
             title: "Issue Type",
             align: "left",
             val: "issueTypeName",
-            render: (rowData) => <span>{rowData?.issueType?.issueTypeName}</span>,
-        }, 
-         {
+            render: (rowData) => {
+                const issue = issueType?.find(i => i.value === rowData.issueTypeId);
+                return <span>{issue?.label}</span>;
+            }
+        },
+        {
             title: "Priority Type",
             align: "left",
             val: "priorityType",
             render: (rowData) => <span>{rowData?.priorityType}</span>,
-        },  {
-            title: "Expected Date",
+        }, {
+            title: "Expected On",
             align: "left",
-            val: "expectedDate",
-            render: (rowData) => <span>{rowData?.expectedDate}</span>,
+            val: "expectedTime",
+            render: (rowData) => <span>{rowData?.expectedTime}</span>,
         },
         {
             title: "Ticket Raised By",
             align: "left",
             val: "ticketRaisedBy",
-            render: (rowData) => <span>{rowData?.ticketRaisedBy }</span>,
+            render: (rowData) => <span>{rowData?.ticketRaisedBy}</span>,
         },
-         {
+        {
             title: "Assign",
             align: "center",
             render: (rowData) => (

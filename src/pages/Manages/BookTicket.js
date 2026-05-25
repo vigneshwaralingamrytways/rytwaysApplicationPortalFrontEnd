@@ -10,7 +10,7 @@ import {
 } from "../../Components/CommonImports/CommonImports";
 
 import NewTable from "../../Components/NewTable/NewTable";
-import TicketTable from "./TicketTable"; // Rename this to TicketTable
+import TicketTable from "./TicketTable";
 import NewTicket from "./NewTicket";
 import AssignTicket from "./AssignTicket";
 
@@ -46,7 +46,22 @@ const BookTicket = (props) => {
         );
     };
 
-    const validate = () => true;
+    const validate = (watchValues, { setError, clearErrors }) => {
+        if (watchValues.expectedTime) {
+            const selectedTime = new Date(watchValues.expectedTime).getTime();
+            const currentTime = new Date().getTime();
+
+            if (selectedTime < currentTime) {
+                setError("expectedTime", {
+                    type: "manual",
+                    message: "Expected Time cannot be in the past",
+                });
+            } else {
+                clearErrors("expectedTime");
+            }
+        }
+        return true;
+    };
 
     const closeSlide = () => {
         setIsSlideOpen(false);
@@ -56,7 +71,7 @@ const BookTicket = (props) => {
     const [employeeList, setEmployeeList] = useState([]);
 
     const loadEmployees = useCallback(async () => {
-        const data = await get(api + "/manageEmployee/getall");
+        const data = await get(api + `/manageEmployee/getall?t=${Date.now()}`);
         console.log("all emp,", data)
         if (response.ok) {
             setEmployeeList(
@@ -71,7 +86,7 @@ const BookTicket = (props) => {
 
 
     const loadIsuueTypes = useCallback(async () => {
-        const data = await get(api + "/issueType/getAll");
+        const data = await get(api + `/issueType/getAll?t=${Date.now()}`);
         if (response.ok) {
             setIssueType(
                 data.map((item) => ({
@@ -82,7 +97,7 @@ const BookTicket = (props) => {
         }
     }, [get, response]);
     const loadTicketType = useCallback(async () => {
-        const data = await get(api + "/ticketType/getAll");
+        const data = await get(api + `/ticketType/getAll?t=${Date.now()}`);
         if (response.ok) {
             setTicketType(
                 data.map((item) => ({
@@ -93,7 +108,7 @@ const BookTicket = (props) => {
         }
     }, [get, response]);
     const loadCustomers = useCallback(async () => {
-        const data = await get(api + "/customer/getall");
+        const data = await get(api + `/customer/getall`);
         if (response.ok) {
             setCustomerList(
                 data.map((item) => ({
@@ -103,9 +118,8 @@ const BookTicket = (props) => {
             );
         }
     }, [get, response]);
-
     const loadStatuses = useCallback(async () => {
-        const data = await get(api + "/status/getAllByStatusType/TICKET");
+        const data = await get(api + `/status/getAllByStatusType/TICKET?t=${Date.now()}`);
         if (response.ok) {
             setStatusList(
                 data.map((item) => ({
@@ -120,7 +134,7 @@ const BookTicket = (props) => {
 
 
     const loadTickets = useCallback(async () => {
-        const allTickets = await get(api + "/bookTickets/getAllTickets");
+        const allTickets = await get(api + `/bookTickets/getAllTickets?t=${Date.now()}`);
         console.log("load all ticktes", allTickets)
         if (response.ok) {
             setTicketData(allTickets);
@@ -144,10 +158,9 @@ const BookTicket = (props) => {
         if (value.ticketId) {
 
             const updatedTicket = await put(
-                api + "/bookTickets/update/" + value.ticketId,
+                api + `/bookTickets/update/${value.ticketId}?t=${Date.now()}`,
                 value
             );
-
             console.log("update tkt", updatedTicket)
             if (response.ok) {
                 AlertHandler("Ticket updated successfully", "success");
@@ -170,11 +183,15 @@ const BookTicket = (props) => {
 
                 setIsSlideOpen(false);
             }
+            else {
+                const errorMsg = response.data?.message || "Ticket Failed To Update";
+                AlertHandler(errorMsg, "danger");
+            }
 
         } else {
 
             const newTicket = await post(
-                api + "/bookTickets/createTicket",
+                api + `/bookTickets/createTicket?t=${Date.now()}`,
                 value
             );
             console.log("saved tkt", newTicket)
@@ -186,11 +203,17 @@ const BookTicket = (props) => {
 
                 setIsSlideOpen(false);
             }
+            else {
+                const errorMsg = response.data?.message || "Ticket Failed To create";
+                AlertHandler(errorMsg, "danger");
+            }
         }
     };
 
     const deleteTicket = async (ticketId) => {
-        const data = await del(api + "/bookTickets/delete/" + ticketId);
+        const data = await del(
+            api + `/bookTickets/delete/${ticketId}?t=${Date.now()}`
+        );
         console.log(" deleetd", data)
 
         if (response.ok) {
@@ -305,11 +328,13 @@ const BookTicket = (props) => {
                 validationProps: "Issue type is required"
             },
             {
-                title: "Expected Date",
-                type: "date",
-                name: "expectedDate",
-                contains: "date",
-                inpprops: {},
+                title: "Expected On",
+                type: "time",
+                name: "expectedTime",
+                contains: "time",
+                inpprops: {
+                    min: new Date().toISOString().split('T')[0]
+                },
                 validationProps: "Raised by is required"
             },
             {
@@ -352,15 +377,25 @@ const BookTicket = (props) => {
                 inpprops: {},
                 validationProps: "Customer is required"
             },
+            // {
+            //     title: "Assigned On Date",
+            //     type: "date",
+            //     name: "assignedOnDate",
+
+            //     options: [],
+            //     contains: "date",
+            //     inpprops: {},
+            //     validationProps: " assignedOnDate is required"
+            // },
             {
-                title: "Assigned On Date",
-                type: "date",
-                name: "assignedOnDate",
+                title: "Assigned On time",
+                type: "time",
+                name: "assignedOnTime",
 
                 options: [],
-                contains: "date",
+                contains: "time",
                 inpprops: {},
-                validationProps: " assignedOnDate is required"
+                validationProps: "Assigned Time is Required"
             },
 
         ]
@@ -456,6 +491,7 @@ const BookTicket = (props) => {
                     saveTicket={saveTicket}
                     template={ticketTemplate()}
                     validate={validate}
+                    watchFields={["expectedTime"]}
                     onCancel={closeSlide}
                 />
             );
@@ -492,11 +528,29 @@ const BookTicket = (props) => {
     // RETURN UI
     // ============================
     return (
-        <div className={classes.container}>
-            {/* Ticket Table */}
-            {!isSlideOpen && (
+        <div
+            className={classes.container}
+            style={{
+                position: "relative",
+                width: "100%",
+                minHeight: "600px",
+                overflow: "hidden"
+            }}
+        >
+            {/* ? Ticket Table View ? */}
+            <div
+                style={{
+                    transition: "0.4s ease",
+                    opacity: isSlideOpen ? 0 : 1,
+                    pointerEvents: isSlideOpen ? "none" : "auto",
+                }}
+            >
                 <NewTable
-                    cols={TicketTable(showFormHandler, actions)}
+                    cols={TicketTable(showFormHandler, actions, {
+                        ticketType,
+                        issueType,
+                        customerList
+                    })}
                     data={filteredTicketData}
                     striped
                     rows={25}
@@ -510,17 +564,26 @@ const BookTicket = (props) => {
                     buttonName="Search"
                     onCancel={props.onCancel}
                 />
-            )}
+            </div>
 
-            {/* Slide Popup for Add/Edit */}
+            {/* ? Slide Popup View (Add/Edit) ? */}
             <div
-                className={`${classes.sliderPopup} ${isSlideOpen ? classes.open : ""
-                    }`}
+                style={{
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    width: "100%",
+                    height: "100%",
+                    background: "white",
+                    transform: isSlideOpen ? "translateX(0%)" : "translateX(100%)",
+                    transition: "0.4s ease-in-out",
+                    zIndex: 999,
+                    overflowY: "auto",
+                }}
             >
-                {activeForm}
+                {isSlideOpen && activeForm}
             </div>
         </div>
     );
-};
-
+}
 export default BookTicket;

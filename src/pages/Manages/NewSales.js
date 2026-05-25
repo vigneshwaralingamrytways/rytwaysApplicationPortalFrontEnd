@@ -44,7 +44,7 @@ const NewSales = ({ selectedItem,
     setHeaderId(id);
   };
 
-console.log(" seletceted item:",selectedItem)
+  console.log(" seletceted item:", selectedItem)
   const initialLoadDone = useRef(false);
   const [editingItem, setEditingItem] = useState({});
   // const [Customers, setCustomers] = useState([]);
@@ -54,7 +54,7 @@ console.log(" seletceted item:",selectedItem)
   const headerFormRef = useRef({
     ...selectedItem,
     invoiceDate: selectedItem?.invoiceDate || today,
-   poDate: selectedItem?.poDate || "",
+    poDate: selectedItem?.poDate || "",
     gstNo: "",
     address: "",
     state: ""
@@ -543,9 +543,17 @@ console.log(" seletceted item:",selectedItem)
       let res;
       if (headerIdRef.current && !isCopy) {
         res = await put(api + "/invoiceHeader/update/" + headerIdRef.current, val);
+        if (!response.ok) {
+          AlertHandler(res?.message || "Failed to update Invoice Header", "danger");
+          return null;
+        }
       }
       else {
         res = await post(api + "/invoiceHeader/create?t=" + Date.now(), val);
+        if (!response.ok) {
+          AlertHandler(res?.message || "Failed to create Invoice Header", "danger");
+          return null;
+        }
       }
       console.log(" res for save header ", res)
       if (res) {
@@ -554,9 +562,6 @@ console.log(" seletceted item:",selectedItem)
         headerFormRef.current.invoiceHeaderId = res.invoiceHeaderId;
         // AlertHandler(headerId ? "Invoice Header Updated" : "Invoice Header Saved", "success");
         return res.invoiceHeaderId;
-      } else {
-        AlertHandler("Failed to save Invoice Header", "danger");
-        return null;
       }
     } catch (err) {
       console.log(err);
@@ -596,7 +601,7 @@ console.log(" seletceted item:",selectedItem)
         invoiceDate: headerFormRef.current.invoiceDate,
         typeOfInvoiceDetails: "SALES"
       };
-       
+
       if (itemData.invoiceDetailsId && !isCopy) {
         const resUpdate = await put(api + "/invoiceDetails/update/" + itemData.invoiceDetailsId, val)
         console.log("update  resuslt", resUpdate)

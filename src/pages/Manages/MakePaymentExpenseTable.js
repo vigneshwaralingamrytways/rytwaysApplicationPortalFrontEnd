@@ -73,6 +73,40 @@ const MakePaymentExpenseTable = ({ showFormHandler, actions }) => {
         <span>{rowData?.balance}</span>
       ),
     },
+    {
+    title: "Status",
+    align: "right",
+    val: "status",
+    // render: (row) => <span>{row.invoiceHeader?.status?.statusName || "Not Recived"}</span>,
+    render: (row) => {
+      const statusName = row?.status?.statusName || "NOT PAID";
+
+      let statusColor = "";
+      if (statusName === 'PAID') {
+        statusColor = "green";
+      } else if (statusName === 'NOT PAID') {
+        statusColor = "red";
+      } else if (statusName === 'PARTLY PAID') {
+        statusColor = "yellow";
+      }
+
+      return (
+        <div style={{
+          backgroundColor: statusColor,
+          color: "black",
+          fontWeight: "700",
+          fontSize: "12px",
+          padding: "4px 10px",
+          borderRadius: "6px",
+          textAlign: "center",
+          display: "inline-block",
+          minWidth: "100px"
+        }}>
+          {statusName}
+        </div>
+      );
+    }
+  },
 
     {
       title: "Payment",

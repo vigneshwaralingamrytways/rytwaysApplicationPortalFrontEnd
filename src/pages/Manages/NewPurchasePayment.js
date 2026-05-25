@@ -45,7 +45,9 @@ export default function NewPurchasePayment({
     }
     // const data = await get(api + `/paymentDetails/getAll`);
     //  const data = await get(api + `/makePayment/getAll/${expenseId}/EXPENSE`);
-    const data = await get(api + `/makePayment/getAll/${invoiceHeaderId}/PURCHASE?t=${Date.now()}`);
+    // const data = await get(api + `/makePayment/getAll/${invoiceHeaderId}/PURCHASE?t=${Date.now()}`);
+    const data = await get(api + `/makePayment/getAllByHeader/${invoiceHeaderId}?t=${Date.now()}`);
+
     console.log("..data for purchase payment load", data);
     if (response.ok && data) {
       setPaymentItems(data);
@@ -85,10 +87,11 @@ export default function NewPurchasePayment({
       ...paymentData,
       referenceId: invoiceHeaderId,
       paymentType: "PURCHASE",
-      // ...(isReconcile && selectedTransaction && {
-      //   transactionId: selectedTransaction.transactionId,
-      //   paymentDate: selectedTransaction.transactionDate,
-      // }),
+      headerId: invoiceHeaderId,
+      ...(isReconcile && selectedTransaction && {
+        transactionId: selectedTransaction.transactionId,
+        paymentDate: selectedTransaction.transactionDate,
+      }),
     };
     console.log(" values for save and update ", val)
     let result;
@@ -159,7 +162,7 @@ export default function NewPurchasePayment({
 
   return (
     // <div className={classes.container}>
-    <Popupcard title={`Add Payment for InvoiveNo: ${selectedItem?.invoiceHeader?.invoiceNo || formData?.invoiceNo || ""}`} showBack onBack={onCancel}>
+    <Popupcard title={`Balance Amount: ${selectedItem?.paymentDetails?.balanceAmount || formData?.balanceAmount ||selectedItem?.balanceAmount|| ""}`} showBack onBack={onCancel}>
       <CreateForm
         template={template}
         rowwise={4}

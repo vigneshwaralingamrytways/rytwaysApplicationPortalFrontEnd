@@ -209,15 +209,25 @@ const AssignTicketView = (props) => {
                 inpprops: {},
                 validationProps: "Customer is required"
             },
+            // {
+            //     title: "Assigned On Date",
+            //     type: "date",
+            //     name: "assignedOnDate",
+
+            //     options: [],
+            //     contains: "date",
+            //     inpprops: {},
+            //     validationProps: "Assigned Date is Required"
+            // },
             {
-                title: "Assigned On Date",
-                type: "date",
-                name: "assignedOnDate",
+                title: "Assigned On time",
+                type: "time",
+                name: "assignedOnTime",
 
                 options: [],
                 contains: "date",
                 inpprops: {},
-                validationProps: "Customer is required"
+                validationProps: "Assigned Time is Required"
             },
             //  {
             //     title: "Completed Date",

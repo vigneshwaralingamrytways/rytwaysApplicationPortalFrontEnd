@@ -302,15 +302,15 @@ const MakePaymentExpense = (props) => {
     fields: [
 
 
-      // {
-      //   title: "Payment Date",
-      //   name: "paymentDate",
-      //   type: "date",
-      //   contains: "date",
-      //   options: [],
-      //   inpprops: { md: 3, },
+      {
+        title: "Payment Date",
+        name: "paymentDate",
+        type: "date",
+        contains: "date",
+        options: [],
+        inpprops: { md: 3, },
 
-      // },
+      },
 
       {
         title: "Payment Mode",
@@ -485,7 +485,7 @@ const MakePaymentExpense = (props) => {
           templatePayement={templatePayement}
           onPaymentSaved={handlePaymentSaved}
           validate={validate}
-          onClose={closeSlide  }
+          onClose={closeSlide}
         />
       )
       setIsSlideOpen(true);

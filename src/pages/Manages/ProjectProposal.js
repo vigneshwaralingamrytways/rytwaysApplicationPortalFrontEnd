@@ -1,4 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import styles from "./RichEditor.module.css";
+
 import {
     CreateForm,
     SimpleCard,
@@ -20,6 +22,7 @@ import NewTable from "../../Components/NewTable/NewTable";
 
 
 import ProjectItemTable from "./ProjectItemTable";
+import RichEditor from "./RichEditor";
 
 export default function ProjectProposal(
     props
@@ -55,12 +58,13 @@ export default function ProjectProposal(
             {
 
                 // inpprops: {},
-                inpprops: { md: 12, rows: 20, minHeight: "300px" },
+                colMdSize: 12,
+                inpprops: {},
                 title: "Scope of Work",
-                type: "textarea",
+                type: "richtext",
                 name: "scopeOfWork",
                 contains: "textarea",
-                validationProps: "scope of Work is required",
+                // validationProps: "scope of Work is required",
             },
             {
 
@@ -206,10 +210,18 @@ export default function ProjectProposal(
         console.log("proposal create.", result)
         if (response.ok) {
 
-            AlertHandler("Proposal Created Successfully", "success");
+            props.selectedItem.scopeOfWork = values.scopeOfWork;
+            props.selectedItem.paymentTerms = values.paymentTerms;
+            props.selectedItem.notes = values.notes;
+            props.selectedItem.quatationDate = values.quatationDate;
+
+
             if (values.projectId) {
 
                 AlertHandler("Proposal Updated Successfully", "success");
+            } else {
+
+                AlertHandler("Proposal Created Successfully", "success");
             }
         }
         else {
@@ -293,12 +305,15 @@ export default function ProjectProposal(
 
         if (action === "Edit") {
             setFormValues(item);
+
         }
     };
 
 
 
     const actions = ["Edit", "Delete"];
+
+
     return (
         <div className={classes.container}>
             <Popupcard
@@ -306,12 +321,23 @@ export default function ProjectProposal(
                 showBack onBack={props.onCancel}
 
             >
+                {/* <div style={{ marginBottom: "20px", padding: "15px", background: "rgba(255,255,255,0.05)", borderRadius: "10px" }}>
+                    <label style={{ color: "#fff", marginBottom: "10px", display: "block" }}>Scope of Work</label>
+
+                    <RichEditor
+                        value={formValues.scopeOfWork}
+                        onChange={(v) => setFormValues(prev => ({ ...prev, scopeOfWork: v }))}
+                        readOnly={false}
+                    />
+                </div> */}
                 <CreateForm
+                    // template={{ fields: template.fields.filter(f => f.name !== "scopeOfWork") }}
                     template={template}
                     rowwise={3}
                     // defaultValues={{}}
                     defaultValues={props.selectedItem}
                     onSubmit={proposalCreate}
+                    // onSubmit={(values) => proposalCreate({ ...values, scopeOfWork: formValues.scopeOfWork })}
                     onCancel={props.onCancel}
                     buttonName="Save"
                     validate={validate}

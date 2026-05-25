@@ -1,0 +1,66 @@
+.richEditorWrap {
+  border: 1px solid #000;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.editorToolbar {
+  display: flex;
+  gap: 4px;
+  padding: 6px 10px;
+  border-bottom: 1px solid #000;
+  background: #f1f5f9;
+  flex-wrap: wrap;
+}
+
+.tbBtn {
+  background: #fff;
+  border: 1px solid #000;
+  color: #000;
+  border-radius: 5px;
+  padding: 3px 9px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.tbBtn:hover {
+  background: #000;
+  color: #fff;
+}
+
+.richContent {
+  min-height: 200px;
+  max-height: 340px;
+  overflow-y: auto;
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #000 !important;
+  background: #fff;
+  outline: none;
+}
+
+.richContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.richContent::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+.richReadOnly {
+  cursor: default;
+  background: #f9fafb;
+}
+
+.richContent:focus {
+  outline: none;
+}
+
+.richContent[contenteditable="true"] {
+  border-top: 1px solid #000;
+}

@@ -189,8 +189,10 @@ export default function SalesDashboard() {
     const totalTds = kpiData.salesTds || 0
     const purchases = kpiData.purchasePaid || 0;
     const expenses = kpiData.expenses || 0;
-    console.log("balance as on date", received + " --" + purchases + " -- " + expenses)
-    return (received) - (purchases + expenses);
+    console.log("balance as on date: recived ", received + " -purchase-" + purchases + " expense-- " + expenses)
+    const bal = (received) - (purchases + expenses)
+    console.log(" bank balanace as on today", bal)
+    return bal;
   };
 
   const loadSalesAging = useCallback(async (type = "SALES") => {
@@ -329,7 +331,7 @@ export default function SalesDashboard() {
     const expenseTotal = await get(api + "/manageExpense/getTotalExpense");
 
     if (response.ok) {
-      const netRevenue = (salesTotal || 0) - (purchaseTotal || 0);
+       
       setSalesNetTotal(salesTotal);
       setPurchaseNetTotal(purchaseTotal);
       setKpiData(prev => ({
@@ -337,7 +339,7 @@ export default function SalesDashboard() {
         sales: salesTotal,
         purchase: purchaseTotal,
         expenses: expenseTotal,
-        netRevenue: netRevenue
+        netRevenue: revenueTotal
       }));
     }
   }, [get, response]);
@@ -400,12 +402,16 @@ export default function SalesDashboard() {
       loadServiceBreakdown(getCurrentFinancialYear());
     }
   };
-
   const formatCurrency = (amount) => {
-    if (typeof amount === "object") {
-      return "₹ " + (amount?.total || 0);
-    }
-    return "₹ " + amount;
+    let value = typeof amount === "object" ? amount?.total : amount;
+    const numericValue = Number(value) || 0;
+    //rupees Symbol--₹
+    const formattedNumber = numericValue.toLocaleString('en-IN', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+
+    return formattedNumber
   };
 
 
@@ -509,22 +515,22 @@ export default function SalesDashboard() {
         <div className={styles.kpiGrid}>
           <div className={styles.kpiCardPurple}>
             <p>Sales</p>
-            <h2>{formatCurrency(filteredKpiData.sales || salesNetTotal || 0)}</h2>
+            <h3>₹ &nbsp;{formatCurrency(filteredKpiData.sales || salesNetTotal || 0)}</h3>
           </div>
 
           <div className={styles.kpiCardBlue}>
             <p>Purchases</p>
-            <h2>{formatCurrency(filteredKpiData.purchase || purchaseNetTotal || 0)}</h2>
+            <h3>₹ &nbsp;{formatCurrency(filteredKpiData.purchase || purchaseNetTotal || 0)}</h3>
           </div>
 
           <div className={styles.kpiCardRed}>
             <p>Expenses</p>
-            <h2>{formatCurrency(kpiData?.expenses || 0)}</h2>
+            <h3>₹ &nbsp;{formatCurrency(kpiData?.expenses || 0)}</h3>
           </div>
 
           <div className={styles.kpiCardIndigo}>
             <p>Net Revenue</p>
-            <h2>{formatCurrency(kpiData?.netRevenue || 0)}</h2>
+            <h2>₹ &nbsp;{formatCurrency(kpiData?.netRevenue || 0)}</h2>
           </div>
 
           {/* ? COMMENT THIS IF NOT NEEDED */}
@@ -711,17 +717,17 @@ export default function SalesDashboard() {
 
                   <div className={styles.tableCol}>
                     <span>Received</span>
-                    <b>{formatCurrency(salesPaid || 0)}</b>
+                    <b>₹ &nbsp;{formatCurrency(salesPaid || 0)}</b>
                   </div>
 
                   <div className={styles.tableCol}>
                     <span>TDS Amount</span>
-                    <b>{formatCurrency(salesTds || 0)}</b>
+                    <b>₹ &nbsp;{formatCurrency(salesTds || 0)}</b>
                   </div>
 
                   <div className={styles.tableCol}>
                     <span>Balance</span>
-                    <b>{formatCurrency(salesBalance || 0)}</b>
+                    <b>₹ &nbsp;{formatCurrency(salesBalance || 0)}</b>
                   </div>
                   <div
                     className={styles.tableCol}
@@ -729,7 +735,7 @@ export default function SalesDashboard() {
                     onClick={() => handlePaymentTypeChange("SALES")}
                   >
                     <span>Net Receivable</span>
-                    <b>{formatCurrency(salesNetTotal || 0)}</b>
+                    <b>₹ &nbsp;{formatCurrency(salesNetTotal || 0)}</b>
                   </div>
 
                 </div>
@@ -741,12 +747,12 @@ export default function SalesDashboard() {
                 <div className={styles.tableRow}>
                   <div className={styles.tableCol}>
                     <span>Total Purchases</span>
-                    <b>{formatCurrency(purchasesPaid || 0)}</b>
+                    <b>₹ &nbsp;{formatCurrency(purchasesPaid || 0)}</b>
                   </div>
 
                   <div className={styles.tableCol}>
                     <span>Balance To Pay</span>
-                    <b>{formatCurrency(purchasesBalance || 0)}</b>
+                    <b>₹ &nbsp;{formatCurrency(purchasesBalance || 0)}</b>
                   </div>
 
                   <div
@@ -755,7 +761,7 @@ export default function SalesDashboard() {
                     onClick={() => handlePaymentTypeChange("PURCHASE")}
                   >
                     <span>Net Payable</span>
-                    <b>{formatCurrency(kpiData?.purchase || 0)}</b>
+                    <b>₹ &nbsp;{formatCurrency(kpiData?.purchase || 0)}</b>
                   </div>
 
                 </div>
@@ -766,13 +772,13 @@ export default function SalesDashboard() {
 
           {/* BANK BALANCE CARD */}
           <div className={styles.card}>
-            <h3>
+            <h4>
               Bank Balance as on{" "}
               {bankDate
                 ? new Date(bankDate).toLocaleDateString("en-GB")
                 : new Date().toLocaleDateString("en-GB")}
-              : {formatCurrency(computedBankBalance())}
-            </h3>
+              : ₹ &nbsp;{formatCurrency(computedBankBalance())}
+            </h4>
 
             <NewTable
               cols={SalesSummaryTable()}

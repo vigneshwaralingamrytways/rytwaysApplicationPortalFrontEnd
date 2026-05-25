@@ -191,7 +191,7 @@ export default function NewSalesPayment({
   const actions = ["Edit", "Delete", "Add"];
   return (
     <div className={classes.container}>
-      <Popupcard title={`Add Payment for Sales InvoiceNo ${selectedItem.invoiceNo || ""}`} showBack onBack={onCancel}>
+      <Popupcard title={`Balance Amount : ${selectedItem.paymentDetails?.balanceAmount || ""}`} showBack onBack={onCancel}>
         <CreateForm
           template={template}
           rowwise={4}

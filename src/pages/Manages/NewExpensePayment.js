@@ -27,8 +27,7 @@ export default function NewExpensePayment({ selectedItem,
     // const data = await get(api + "/makePayment/getall");
     if (!expenseId) return;
 
-    const data = await get(api + `/makePayment/getAll/${expenseId}/EXPENSE?t=${Date.now()}`);
-    console.log("..data for payment load", data, expenseId)
+    const data = await get(api + `/makePayment/getAllExpensePayments/${expenseId}?t=${Date.now()}`); console.log("..data for payment load", data, expenseId)
     if (response.ok)
       setPaymentItems(data);
   }, [get, expenseId, response]);
@@ -57,7 +56,7 @@ export default function NewExpensePayment({ selectedItem,
     const val = {
 
       ...payment,
-      referenceId: expenseId,
+      headerId: expenseId,
       paymentType: "EXPENSE",
 
       ...(isReconcile && selectedTransaction && {
@@ -109,7 +108,7 @@ export default function NewExpensePayment({ selectedItem,
       <Popupcard title={`Add Payment for Expense`} showBack onBack={onCancel}>
         <CreateForm
           template={template}
-          rowwise={3}
+          rowwise={4}
           // defaultValues={selectedItem}
           defaultValues={formData}
           onSubmit={(data) => savePayment(data)}

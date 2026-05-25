@@ -13,7 +13,7 @@ import NewIssueType from "./NewIssueType";
 import NewTable from "../../Components/NewTable/NewTable";
 
 const IssueTypeMaster = (props) => {
-  const { get, del, post, response } = useFetch({ data: [] });
+  const { get, del, post,put, response } = useFetch({ data: [] });
   const dispatch = useDispatch();
 
   const [issueTypes, setIssueTypes] = useState([]);
@@ -74,7 +74,7 @@ const IssueTypeMaster = (props) => {
   const saveIssueType = async (val) => {
     if (val.issueTypeId) {
 
-      const updated = await post(
+      const updated = await put(
         api + "/issueType/update/" + val.issueTypeId,
         val
       );

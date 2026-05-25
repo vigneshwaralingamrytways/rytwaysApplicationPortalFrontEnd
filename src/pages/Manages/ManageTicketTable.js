@@ -23,12 +23,12 @@ const ManageTicketTable = (showFormHandler,
             render: (rowData) => <span>{rowData?.customer?.customerName || rowData?.customerName}</span>,
         },
 
-        // {
-        //     title: "Ticket Description",
-        //     align: "left",
-        //     val: "ticketDescription",
-        //     render: (rowData) => <span>{rowData?.ticketDescription || rowData?.description}</span>,
-        // },
+        {
+            title: "Ticket Description",
+            align: "left",
+            val: "ticketDescription",
+            render: (rowData) => <span>{rowData?.ticketDescription || rowData?.description}</span>,
+        },
         // {
         //     title: "Type of Problem",
         //     align: "left",
@@ -56,8 +56,8 @@ const ManageTicketTable = (showFormHandler,
         {
             title: "Assigned On",
             align: "left",
-            val: "assignedOnDate",
-            render: (rowData) => <span>{rowData?.assignedOnDate}</span>,
+            val: "assignedOnTime",
+            render: (rowData) => <span>{rowData?.assignedOnTime}</span>,
         },
         {
             title: "Status",
