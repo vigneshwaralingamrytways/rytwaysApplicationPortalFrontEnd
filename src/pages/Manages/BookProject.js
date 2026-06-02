@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   api,
   useFetch,
@@ -18,11 +18,18 @@ import NewBill from "./NewBill";
 import ProjectProposal from "./ProjectProposal";
 
 import { saveAs } from "file-saver";
+import { FaDownload, FaEye, FaTimes } from "react-icons/fa";
 
 const BookProject = (props) => {
   const { get, del, post, put, response } = useFetch({ data: [] });
   const dispatch = useDispatch();
 
+
+  const [viewPopup, setViewPopup] = useState(null);   // record index
+  const [viewBlobUrl, setViewBlobUrl] = useState(null);
+  const [viewMimeType, setViewMimeType] = useState("");
+  const [viewLoading, setViewLoading] = useState(false);
+  const blobUrlRef = useRef(null);
   const [Project, setProject] = useState([]);
 
   const [customerList, setCustomerList] = useState([]);
@@ -72,6 +79,8 @@ const BookProject = (props) => {
           value: item.customerId,
         }))
       );
+    } else {
+      setCustomerList([])
     }
   }, [get, response]);
 
@@ -84,6 +93,8 @@ const BookProject = (props) => {
           value: item.statusId,
         }))
       );
+    } else {
+      setStatusList([])
     }
   }, [get, response]);
 
@@ -96,6 +107,8 @@ const BookProject = (props) => {
           value: item.projectCatagoryId,
         }))
       );
+    } else {
+      setProjectCategoryList([])
     }
   }, [get, response]);
 
@@ -108,6 +121,9 @@ const BookProject = (props) => {
           value: item.projectTypeId,
         }))
       );
+    }
+    else {
+      setProjectTypeList([])
     }
   }, [get, response]);
 
@@ -380,26 +396,94 @@ const BookProject = (props) => {
   // ============================
   // PDF DOWNLOAD
   // ============================
+  const popupStyles = {
+    overlay: {
+      position: "fixed", top: 0, left: 0,
+      width: "100vw", height: "100vh",
+      backgroundColor: "rgba(0, 0, 0, 0.75)",
+      display: "flex", justifyContent: "center", alignItems: "center",
+      zIndex: 999999,
+    },
+    box: {
+      width: "min(1100px, 95vw)", height: "min(780px, 90vh)",
+      padding: "20px", borderRadius: "12px",
+      backgroundColor: "#161d31", border: "1px solid rgba(255,255,255,0.1)",
+      display: "flex", flexDirection: "column", gap: "15px",
+      boxShadow: "0 20px 50px rgba(0,0,0,0.5)",
+      position: "relative",
+      zIndex: 1000000,
+    },
+    header: { display: "flex", justifyContent: "space-between", alignItems: "center" },
+    title: { color: "#fff", fontWeight: 600, fontSize: "16px", display: "flex", alignItems: "center", gap: "10px" },
+    body: {
+      flex: 1, borderRadius: "8px",
+      backgroundColor: "#1f2945", border: "1px solid rgba(255,255,255,0.05)",
+      overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center",
+    },
+    closeBtn: {
+      backgroundColor: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
+      color: "#fff", borderRadius: "6px", padding: "6px 12px", cursor: "pointer",
+      display: "flex", alignItems: "center", gap: "5px", fontSize: "13px",
+    },
+    btnDownload: {
+      padding: "6px 14px", borderRadius: "6px", border: "none",
+      background: "linear-gradient(135deg, #667eea, #764ba2)",
+      color: "#fff", cursor: "pointer", fontSize: "13px", display: "flex", alignItems: "center", gap: "6px"
+    },
+    loadingText: { color: "rgba(255,255,255,0.6)", fontSize: "14px" }
+  };
+  const handleProposalPdf = async (rowData, index) => {
 
-  const handleProposalPdf = async (rowData) => {
+    setViewPopup(index);
+    setViewMimeType(rowData);
+    setViewBlobUrl(null);
+    setViewLoading(true);
     try {
-      await get(api + `/manageProject/printProposal/${rowData.projectId}`);
+      await get(api + `/manageProject/printProposal/${rowData.projectId}?t=${Date.now()}`);
 
       if (response.ok) {
         const blob = await response.blob();
-        saveAs(blob, `Proposal_${rowData.projectName}.pdf`);
-        AlertHandler("Proposal PDF Downloaded", "success");
+        const url = window.URL.createObjectURL(blob);
+
+        if (blobUrlRef.current) window.URL.revokeObjectURL(blobUrlRef.current);
+        blobUrlRef.current = url;
+
+        setViewBlobUrl(url);
+        setViewLoading(false);
+        // saveAs(blob, `Proposal_${rowData.projectName}.pdf`);
+        // AlertHandler("Proposal PDF Downloaded", "success");
+      } else {
+        setViewLoading(false);
+        AlertHandler("Failed to retrieve document  ", "danger");
       }
     } catch (err) {
+      setViewLoading(false);
+      closeViewPopup();
+      AlertHandler("Error loading PDF preview", "danger");
       console.log("PDF Error:", err);
     }
   };
 
+  const closeViewPopup = () => {
+    setViewPopup(null);
+    setViewBlobUrl(null);
+    if (blobUrlRef.current) {
+      window.URL.revokeObjectURL(blobUrlRef.current);
+      blobUrlRef.current = null;
+    }
+  };
+  const handleDirectDownload = (index) => {
+    if (!viewBlobUrl || !viewMimeType) return;
+    const rowData = viewMimeType;
+
+    saveAs(viewBlobUrl, `Proposal_${rowData?.projectName}.pdf`);
+    // AlertHandler("Proposal PDF downloaded!", "success");
+  };
   // ============================
   // SHOW FORM HANDLER
   // ============================
 
-  const showFormHandler = (item, action) => () => {
+  const showFormHandler = (item, action, index) => () => {
     const isEdit = action === "Edit";
     // const formData = isEdit ? { ...item } : {};
     const getToday = () => {
@@ -436,7 +520,7 @@ const BookProject = (props) => {
     if (action === "Delete") deleteProject(item.projectId);
 
     // PDF
-    if (action === "Pdf") handleProposalPdf(item);
+    if (action === "Pdf") handleProposalPdf(item, index);
 
     // OTHER ACTIONS STILL MODAL
     if (action === "Upload") {
@@ -491,7 +575,7 @@ const BookProject = (props) => {
           cols={ProjectTable(showFormHandler, actions)}
           data={Project}
           striped
-          rows={25}
+          rows={10}
           title="Manage Project"
           showPlusCircle={true}
           handleAddClick={showFormHandler({}, "Add")}
@@ -511,6 +595,50 @@ const BookProject = (props) => {
       >
         {activeForm}
       </div>
+      {viewPopup !== null && (
+        <div style={popupStyles.overlay} onClick={closeViewPopup}>
+          <div style={popupStyles.box} onClick={(e) => e.stopPropagation()}>
+
+            {/* Modal Header */}
+            <div style={popupStyles.header}>
+              <div style={popupStyles.title}>
+                <FaEye style={{ color: "#67e8f9" }} />
+                Proposal Preview - {viewMimeType?.projectName}
+              </div>
+              <div style={{ display: "flex", gap: "10px" }}>
+                {!viewLoading && viewBlobUrl && (
+                  <button
+                    style={popupStyles.btnDownload}
+                    onClick={() => handleDirectDownload(viewPopup)}
+                  >
+                    <FaDownload /> Download File
+                  </button>
+                )}
+                <button style={popupStyles.closeBtn} onClick={closeViewPopup}>
+                  <FaTimes /> Close
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Core View Area */}
+            <div style={popupStyles.body}>
+              {viewLoading ? (
+                <div style={popupStyles.loadingText}>Compiling compilation records... Please wait.</div>
+              ) : viewBlobUrl ? (
+                <iframe
+                  src={viewBlobUrl}
+                  style={{ width: "100%", height: "100%", border: "none", backgroundColor: "#fff" }}
+                  title="Proposal Document Preview"
+                  allow="fullscreen"
+                />
+              ) : (
+                <div style={popupStyles.loadingText}>Failed to generate preview frame stream structure.</div>
+              )}
+            </div>
+
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -106,11 +106,11 @@ const ProjectTable = (showFormHandler, actions) => {
         {
             title: "Pdf",
             align: "center",
-            render: (rowData) => (
+            render: (rowData,index) => (
                 <>
                     <span
                         style={{ cursor: "pointer", color: "red" }}
-                        onClick={showFormHandler(rowData, actions[5])}
+                        onClick={showFormHandler(rowData, actions[5],index)}
                     >
                         <FaIcons.FaPrint />
                     </span>

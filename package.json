@@ -2,7 +2,7 @@
   "name": "costing",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://localhost:8083/RytwaysFrontEnd",
+  "homepage": "http://app.rytways.com:9080/RytwaysFrontEnd",
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
@@ -70,7 +70,8 @@
     "redux-persist": "^6.0.0",
     "styled-components": "^5.3.6",
     "use-http": "^1.0.27",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -84,7 +85,7 @@
       "react-app/jest"
     ]
   },
-  "proxy": "http://localhost:8083/",
+  "proxy": "http://app.rytways.com:9080/",
   "browserslist": {
     "production": [
       ">0.2%",

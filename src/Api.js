@@ -1,8 +1,8 @@
 //const api = 'SRIPATHIPurchaseLive'
 // const api = 'SRIPATHIPurchaseLive'
-// const api ="RytwaysBackEnd"
+const api ="RytwaysBackEnd"
 // const api ="RytwaysBackEndLive"
-const api =""
+// const api =""
 
 ///PurchaseLive"// SRIPATHI SRIPATHIPurchaseLive
 //"homepage": "http://demo2.rytways.com:9090/SripathiDigitalFactory/",
@@ -18,8 +18,8 @@ export default api
 
 export const downloadLink = "http://demo2.rytways.com/downloads/SRIPATHI"
 
-// export const proxy = "http://app.rytways.com:9080/"
-export const proxy= "http://localhost:8083/" 
+export const proxy = "http://app.rytways.com:9080/"
+// export const proxy= "http://localhost:8083/" 
 
 //"proxy": "http://app.sripathi.net/",
 //"proxy": "http://localhost:8082/",

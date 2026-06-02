@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 // import NewTable from "../../Components/NewTable/NewTable";
 // import { api, useFetch } from "../../Components/CommonImports/CommonImports";
 import classes from "../Master/Master.module.css";
@@ -27,9 +27,9 @@ import NewPurchasePayment from "./NewPurchasePayment";
 import { saveAs } from 'file-saver';
 import GstReportsable from "./GstReportsTable";
 import GstReportsTable from "./GstReportsTable";
-
+import * as XLSX from "xlsx";
 const ManageGstReports = ({ document, onCancel }) => {
-    const { get, response } = useFetch({ data: [] });
+    const { get, post, del, response } = useFetch({ data: [] });
     const dispatch = useDispatch();
 
     const [showAlert, alertMessage, alertVariant] = useSelector((state) => [
@@ -48,11 +48,20 @@ const ManageGstReports = ({ document, onCancel }) => {
         );
     };
     const isGst = true;
-    const [Saless, setSaless] = useState([]);
-    const [Customers, setCustomers] = useState([]);
 
+    const [filterFromDate, setFilterFromDate] = useState("");
+    const [filterToDate, setFilterToDate] = useState("");
+    const [previewPopup, setPreviewPopup] = useState(false);
+    const [previewBlobUrl, setPreviewBlobUrl] = useState(null);
+    const [sheets, setSheets] = useState([]);
+    const [activeSheet, setActiveSheet] = useState(0);
+    const blobUrlRef = useRef(null);
+    const [Saless, setSaless] = useState([]);
+    const [allSales, setAllSales] = useState([]);
+    const [customers, setCustomers] = useState([]);
     const [GstReports, SetGstReports] = useState([]);
     const [purchases, setPurchases] = useState([]);
+    const [allPurchases, setAllPurchases] = useState([]);
     const [suppliers, setSuppliers] = useState([]);
 
     // Load suppliers
@@ -62,25 +71,34 @@ const ManageGstReports = ({ document, onCancel }) => {
         if (response.ok) setSuppliers(data.map(s => ({ value: s.supplierId, label: s.supplierName })));
     }, [get, response]);
 
+    // Load Customers
+    const loadCustomers = useCallback(async () => {
+        const data = await get(api + "/customer/getall");
+        console.log(".customer ", data)
+        if (response.ok) setCustomers(data.map(s => ({ value: s.customerId, label: s.customerName })));
+    }, [get, response]);
+
+
+
 
 
     useEffect(() => {
         loadSuppliers();
+        loadCustomers();
+    }, [loadSuppliers, loadCustomers]);
 
-    }, [loadSuppliers]);
 
 
-
-    const loadGstReports = useCallback(async () => {
-        const data = await get(api + "/invoiceHeader/gstReport");
-        console.log(".gst reports ", data)
+    const loadGstReports = useCallback(async (fromDate = null, toDate = null) => {
+        const payload = {
+            fromDate: fromDate || null,
+            toDate: toDate || null
+        };
+        const data = await post(api + "/invoiceHeader/gstReport", payload);
         if (response.ok) {
-            SetGstReports(data)
+            SetGstReports(data);
         }
-
-
-    }
-        , [get, response]);
+    }, [post, response.ok]);
 
 
 
@@ -134,6 +152,7 @@ const ManageGstReports = ({ document, onCancel }) => {
             //      console.log("merged",merged)
 
             setPurchases(data)
+            setAllPurchases(data);
             // }
 
 
@@ -170,8 +189,35 @@ const ManageGstReports = ({ document, onCancel }) => {
     };
 
 
-    function onSubmit(values) {
-        console.log("Search/filter values:", values);
+    function onSubmitPurchase(values) {
+        const { fromDate, toDate, supplierId } = values;
+
+        if (!fromDate && !toDate && !supplierId) {
+            setPurchases(allPurchases);
+            return;
+        }
+
+        const filtered = allPurchases.filter((item) => {
+            const header = item.invoiceHeader ? item.invoiceHeader : item;
+
+            const itemSupplierId = header.supplierId || header.supplier?.supplierId;
+            const supplierMatch = supplierId
+                ? String(itemSupplierId) === String(supplierId)
+                : true;
+
+            let dateMatch = true;
+            if (header.invoiceDate) {
+                const itemDate = new Date(header.invoiceDate).setHours(0, 0, 0, 0);
+                const from = fromDate ? new Date(fromDate).setHours(0, 0, 0, 0) : null;
+                const to = toDate ? new Date(toDate).setHours(0, 0, 0, 0) : null;
+
+                dateMatch = (!from || itemDate >= from) && (!to || itemDate <= to);
+            }
+
+            return supplierMatch && dateMatch;
+        });
+
+        setPurchases(filtered);
     }
 
     const template = {
@@ -210,7 +256,7 @@ const ManageGstReports = ({ document, onCancel }) => {
     };
 
 
-    const filterTemplate = {
+    const templatePurchase = {
         fields: [
             {
                 title: "From Date",
@@ -226,50 +272,122 @@ const ManageGstReports = ({ document, onCancel }) => {
             },
             {
                 title: "Supplier Name",
-                name: "customerName",
-                type: "text",
+                type: "select",
+                name: "supplierId",
+                options: suppliers,
+            },
+        ],
+    };
+
+
+    const templateSale = {
+        fields: [
+            {
+                title: "From Date",
+                name: "fromDate",
+                type: "date",
+                inpprops: {},
+            },
+            {
+                title: "To Date",
+                name: "toDate",
+                type: "date",
+                inpprops: {},
+            },
+            {
+                title: "Customer",
+                name: "customerId",
+                type: "select",
+                contains: "select",
+                options: customers,
+                inpprops: {},
+            },
+        ],
+    };
+
+    const gstReportFilterTemplate = {
+        fields: [
+            {
+                title: "From Date",
+                name: "fromDate",
+                type: "date",
+                inpprops: {},
+            },
+            {
+                title: "To Date",
+                name: "toDate",
+                type: "date",
                 inpprops: {},
             },
         ],
     };
 
 
-    // Load Customers
-    const loadCustomers = useCallback(async () => {
-        const data = await get(api + "/customer/getall");
-        console.log(".customer ", data)
-        if (response.ok) setCustomers(data.map(s => ({ value: s.customerId, label: s.customerName })));
-    }, [get, response]);
 
 
 
-    useEffect(() => {
-        loadCustomers();
+    const handleExcel = async (rowData) => {
+        try {
+            setSheets([]);
+            setActiveSheet(0);
+            setPreviewPopup(true);
+            setPreviewBlobUrl(null);
 
-    }, [loadCustomers]);
+            const payload = {
+                fromDate: filterFromDate || null,
+                toDate: filterToDate || null
+            };
+            // const res = await get(api + `/invoiceHeader/print/${rowData.invoiceHeader?.invoiceHeaderId||rowData.invoiceHeaderId}`);
+            // const result = await get(api + "/invoiceHeader/download/excel/combinedGstReport");
+            const result = await post(api + "/invoiceHeader/download/excel/combinedGstReport", payload);
+            // if (response.ok) {
 
+            //     const blob = await response.blob();
+            //     saveAs(blob, "combinedGstReport.xlsx");
+            // } 
+            if (response.ok) {
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
 
+                if (blobUrlRef.current) window.URL.revokeObjectURL(blobUrlRef.current);
+                blobUrlRef.current = url;
+                setPreviewBlobUrl(url);
 
+                const arrayBuffer = await blob.arrayBuffer();
+                const data = new Uint8Array(arrayBuffer);
+                const workbook = XLSX.read(data, { type: "array" });
+                const parsedSheets = workbook.SheetNames.map((name) => ({
+                    name,
+                    html: XLSX.utils.sheet_to_html(workbook.Sheets[name]),
+                }));
+                setSheets(parsedSheets);
+            }
+            else {
+                setPreviewPopup(false);
+                AlertHandler("Failed to download file", "danger");
+                console.log("fail to docnlods", response)
+            }
+        } catch (err) {
+            setPreviewPopup(false);
+            console.log("errors,", err);
+        }
+    };
+    const closePreviewPopup = () => {
+        setPreviewPopup(false);
+        setSheets([]);
+        setActiveSheet(0);
+        if (blobUrlRef.current) {
+            window.URL.revokeObjectURL(blobUrlRef.current);
+            blobUrlRef.current = null;
+        }
+        setPreviewBlobUrl(null);
+    };
 
-
-  const handleExcel = async (rowData) => {
-    try {
-      // const res = await get(api + `/invoiceHeader/print/${rowData.invoiceHeader?.invoiceHeaderId||rowData.invoiceHeaderId}`);
-      const result = await get(api + "/invoiceHeader/download/excel/combinedGstReport");
-
-      if (response.ok) {
-
-        const blob = await response.blob();
-        saveAs(blob, "combinedGstReport.xlsx");
-      } else {
-        AlertHandler("Failed to download file", "danger");
-        console.log("fail to docnlods", response)
-      }
-    } catch (err) {
-      console.log("errors,", err);
-    }
-  };
-
+    const handleDownloadFallback = () => {
+        if (blobUrlRef.current) {
+            saveAs(previewBlobUrl, "combinedGstReport.xlsx");
+        }
+    };
 
     const loadSaless = useCallback(async () => {
         const data = await get(api + "/invoiceHeader/getAll/SALES");
@@ -282,6 +400,7 @@ const ManageGstReports = ({ document, onCancel }) => {
             //      setSaless(merged);
             //  console.log("merged",merged)
             setSaless(data)
+            setAllSales(data);
             // }
 
 
@@ -320,7 +439,61 @@ const ManageGstReports = ({ document, onCancel }) => {
 
     const actions = ["Edit", "Add", "Upload", "Delete"];
 
+    const onSubmitSales = (values) => {
+        const { fromDate, toDate, customerId } = values;
 
+        if (!fromDate && !toDate && !customerId) {
+            setSaless(allSales);
+            return;
+        }
+
+        const filtered = allSales.filter((item) => {
+            const header = item.invoiceHeader ? item.invoiceHeader : item;
+
+            const itemCustomerId = header.customerId || header.customer?.customerId;
+            const customerMatch = customerId
+                ? String(itemCustomerId) === String(customerId)
+                : true;
+
+            let dateMatch = true;
+            if (header.invoiceDate) {
+                const itemDate = new Date(header.invoiceDate).setHours(0, 0, 0, 0);
+                const from = fromDate ? new Date(fromDate).setHours(0, 0, 0, 0) : null;
+                const to = toDate ? new Date(toDate).setHours(0, 0, 0, 0) : null;
+
+                dateMatch = (!from || itemDate >= from) && (!to || itemDate <= to);
+            }
+
+            return customerMatch && dateMatch;
+        });
+
+        setSaless(filtered);
+    };
+
+    const onSubmitGstFilter = async (values) => {
+        const { fromDate, toDate } = values;
+
+        setFilterFromDate(fromDate || "");
+        setFilterToDate(toDate || "");
+
+        const payload = {
+            fromDate: fromDate || null,
+            toDate: toDate || null
+        };
+
+        try {
+            const result = await post(api + "/invoiceHeader/getGstFilteredData", payload);
+            if (response.ok && result) {
+                setSaless(result.sales || []);
+                setPurchases(result.purchases || []);
+                await loadGstReports(fromDate, toDate);
+            } else {
+                AlertHandler("Failed to filter GST data summaries", "danger");
+            }
+        } catch (error) {
+            console.error("Filter request invocation crash:", error);
+        }
+    };
     return (
         <div className={classes.container}>
             {/* <Popupcard title={"View Document"}> */}
@@ -334,12 +507,13 @@ const ManageGstReports = ({ document, onCancel }) => {
                 handleExcelIcon={() => { }}
                 // showPlusCircle={true}
                 // handleAddClick={showFormHandler({}, "Add")}
-                // template={filterTemplate}
+                template={templateSale}
                 rowwise={3}
                 rows={10}
-                onSubmit={onSubmit}
+                onSubmit={onSubmitSales}
                 buttonName="Search"
                 validate={validate}
+                showFilterIcon={false}
             />
 
             <NewTable
@@ -351,12 +525,13 @@ const ManageGstReports = ({ document, onCancel }) => {
                 // handleExcelIcon={() => { }}
                 // showPlusCircle={true}
                 // handleAddClick={showFormHandler({}, "Add")}
-                // template={filterTemplate}
+                template={templatePurchase}
                 rowwise={3}
                 rows={10}
-                onSubmit={onSubmit}
+                onSubmit={onSubmitPurchase}
                 buttonName="Search"
                 validate={validate}
+                showFilterIcon={false}
             />
 
 
@@ -370,13 +545,90 @@ const ManageGstReports = ({ document, onCancel }) => {
                 // showPlusCircle={true}
                 // handleAddClick={showFormHandler({}, "Add")}
                 // template={filterTemplate}
+                template={gstReportFilterTemplate}
                 rowwise={3}
                 rows={3}
-                onSubmit={onSubmit}
+                // onSubmit={onSubmit}
+                onSubmit={onSubmitGstFilter}
                 buttonName="Search"
                 validate={validate}
+            // showFilterIcon={false}
             />
+            {previewPopup && (
+                <div style={{
+                    position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh",
+                    background: "rgba(0,0,0,0.75)", display: "flex", justifyContent: "center", alignItems: "center",
+                    zIndex: 99999
+                }}>
+                    <div style={{
+                        width: "85vw", height: "85vh", padding: "20px", borderRadius: "12px",
+                        background: "#1e1e2f", display: "flex", flexDirection: "column", gap: "15px"
+                    }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                            <span style={{ color: "#fff", fontWeight: 700, fontSize: "16px" }}>
+                                Combined GST Report Preview
+                            </span>
+                            <div style={{ display: "flex", gap: "10px" }}>
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={handleDownloadFallback}
+                                    style={{ padding: "6px 15px", fontSize: "13px" }}
+                                >
+                                    Download Excel
+                                </button>
+                                <button
+                                    className="btn btn-secondary"
+                                    onClick={closePreviewPopup}
+                                    style={{ padding: "6px 15px", fontSize: "13px" }}
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
 
+                        <div style={{ flex: 1, background: "#fff", borderRadius: "8px", overflow: "hidden", display: "flex", flexDirection: "column" }}>
+                            {sheets.length === 0 ? (
+                                <div style={{ color: "#333", textAlign: "center", paddingTop: "20%", flex: 1 }}>
+                                    Parsing Spreadsheet Data...
+                                </div>
+                            ) : (
+                                <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+                                    <div style={{ display: "flex", borderBottom: "1px solid #ccc", overflowX: "auto", flexShrink: 0, background: "#f3f4f6" }}>
+                                        {sheets.map((sheet, idx) => (
+                                            <div
+                                                key={idx}
+                                                onClick={() => setActiveSheet(idx)}
+                                                style={{
+                                                    padding: "8px 16px",
+                                                    cursor: "pointer",
+                                                    whiteSpace: "nowrap",
+                                                    fontSize: "13px",
+                                                    fontWeight: activeSheet === idx ? 700 : 400,
+                                                    color: activeSheet === idx ? "#000" : "#666",
+                                                    borderBottom: activeSheet === idx ? "3px solid #007bff" : "3px solid transparent",
+                                                    transition: "all 0.15s",
+                                                }}
+                                            >
+                                                {sheet.name}
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <div
+                                        style={{ flex: 1, overflow: "auto", padding: "10px", color: "#000" }}
+                                        className="gst-excel-preview-wrapper"
+                                        dangerouslySetInnerHTML={{ __html: sheets[activeSheet]?.html }}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <style>{`
+                        .gst-excel-preview-wrapper table { border-collapse: collapse; font-size: 13px; width: 100%; }
+                        .gst-excel-preview-wrapper td, .gst-excel-preview-wrapper th { border: 1px solid #ddd; padding: 6px 10px; white-space: nowrap; text-align: left; }
+                        .gst-excel-preview-wrapper th { background-color: #f9fafb; font-weight: bold; }
+                    `}</style>
+                </div>
+            )}
         </div>
     );
 };
