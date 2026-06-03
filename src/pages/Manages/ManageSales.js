@@ -101,12 +101,26 @@ const ManageSales = (props) => {
   /* ---------------- Load Sales ---------------- */
   const loadSaless = useCallback(async () => {
     // const data = await get(api + "/invoiceHeader/getAll/SALES");
-    const data = await get(`${api}/invoiceHeader/getAll/SALES?t=${Date.now()}`);
+
+    const val = {
+      type: "SALES",
+      isFilter: "NO"
+    }
+    const data = await post(api + "/invoiceHeader/getAll", val);
     console.log("all sales data")
     console.table(data)
     if (response.ok) {
-      setSaless(data);
-      setAllSales(data);
+      setSaless(data || []);
+
+    }
+
+    const value = {
+      type: "SALES",
+      isFilter: "YES"
+    }
+    const dataFilter = await post(api + "/invoiceHeader/getAll", value);
+    if (dataFilter) {
+      setAllSales(dataFilter || []);
     }
   }, [get, response]);
 
@@ -253,7 +267,7 @@ const ManageSales = (props) => {
     }
   };
 
-  
+
   /* ---------------- Copy Invoice ---------------- */
   const copyInvoiceDirectly = async (row) => {
     try {
@@ -411,12 +425,12 @@ const ManageSales = (props) => {
         name: "toDate",
         type: "date",
       },
-      {
-        title: "Customer Name",
-        type: "select",
-        name: "customerId",
-        options: Customers,
-      },
+      // {
+      //   title: "Customer Name",
+      //   type: "select",
+      //   name: "customerId",
+      //   options: Customers,
+      // },
     ],
   };
 
@@ -473,7 +487,7 @@ const ManageSales = (props) => {
         {activeForm}
       </div>
 
-     {previewPopup && (
+      {previewPopup && (
         <div style={{
           position: "fixed", top: 0, left: 0, width: "100vw", height: "100vh",
           background: "rgba(0,0,0,0.75)", display: "flex", justifyContent: "center", alignItems: "center",

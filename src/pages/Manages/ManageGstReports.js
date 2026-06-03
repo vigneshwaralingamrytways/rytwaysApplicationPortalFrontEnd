@@ -116,49 +116,29 @@ const ManageGstReports = ({ document, onCancel }) => {
 
 
     const loadPurchases = useCallback(async () => {
-        const data = await get(api + "/invoiceHeader/getAll/PURCHASE");
+
+        const val = {
+            type: "PURCHASE",
+            isFilter: "NO"
+        }
+        const data = await post(api + "/invoiceHeader/getAll", val);
         console.log(" all data ..", data)
         if (response.ok) {
-
             console.log("new data all", data)
-
-
-            //   const merged = [];
-            //    for (let i = 0; i < data.length; i++) {
-            //   const inv = data[i];
-
-            //   let payment = null;
-
-            //   try {
-            //     payment = await get(
-            //       api + "/paymentDetails/byHeader/" + inv.invoiceHeaderId
-            //     );
-            //   } catch (e) {
-            //     console.log("payment error", e);
-            //   }
-
-            //   merged.push({
-            //     ...inv,
-            //     grossAmount: payment?.grossAmount || 0,
-            //     totalGst: payment?.totalGst || 0,
-            //     netTotal: payment?.netTotal ||0,
-            //     advance: payment?.advance|| 0,
-            //     balanceAmount: payment?.balanceAmount || 0,
-            //   });
-            // }
-
-            //     console.log("new data all", data)
-            //      setPurchases(merged);
-            //      console.log("merged",merged)
-
             setPurchases(data)
-            setAllPurchases(data);
-            // }
-
 
         }
 
-        // setPurchases(...data,suppliers);
+        const value = {
+            type: "PURCHASE",
+            isFilter: "YES"
+        }
+        const dataFilter = await post(api + "/invoiceHeader/getAll", value);
+
+        if (dataFilter) {
+            setAllPurchases(dataFilter || []);
+        }
+
     }, [get]);
 
     useEffect(() => {
@@ -390,21 +370,28 @@ const ManageGstReports = ({ document, onCancel }) => {
     };
 
     const loadSaless = useCallback(async () => {
-        const data = await get(api + "/invoiceHeader/getAll/SALES");
+        const val = {
+            type: "SALES",
+            isFilter: "NO"
+        }
+        const data = await post(api + "/invoiceHeader/getAll", val);
 
         console.log(" all data ..", data)
         if (response.ok) {
-
-
             console.log("new data all", data)
-            //      setSaless(merged);
-            //  console.log("merged",merged)
-            setSaless(data)
-            setAllSales(data);
-            // }
 
+            setSaless(data || [])
 
         }
+        const value = {
+            type: "SALES",
+            isFilter: "YES"
+        }
+        const dataFilter = await post(api + "/invoiceHeader/getAll", value);
+        if (dataFilter) {
+            setAllSales(dataFilter || []);
+        }
+
 
         // setSaless(...data,Customers);
     }, [get, response]);

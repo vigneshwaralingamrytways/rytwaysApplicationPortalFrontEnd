@@ -88,24 +88,25 @@ const MakePaymentSales = () => {
 
 
     const loadSaless = useCallback(async () => {
-        const data = await get(api + "/invoiceHeader/getAll/SALES?t=" + Date.now());
+        const val = {
+            type: "SALES",
+            isFilter: "NO"
+        }
+        const data = await post(api + "/invoiceHeader/getAll", val);
         console.log(" all data ..", data)
         console.table(data)
         if (response.ok) {
-            // if (Array.isArray(data)) {
-            //   const newData = data.map(invoice => {
-
-            //     return {
-            //       ...invoice,
-
-            //     }
-            //   })
             console.log("new data all", data)
-            setSaless(data)
-            setAllSales(data);
-            // }
+            setSaless(data || [])
+        }
 
-
+        const value = {
+            type: "SALES",
+            isFilter: "YES"
+        }
+        const dataFilter = await post(api + "/invoiceHeader/getAll", value);
+        if (dataFilter) {
+            setAllSales(dataFilter || []);
         }
 
         // setSaless(...data,Customers);
@@ -150,12 +151,12 @@ const MakePaymentSales = () => {
                 type: "date",
                 inpprops: {},
             },
-            {
-                title: "Customer Name",
-                type: "select",
-                name: "customerId",
-                options: Customers,
-            }
+            // {
+            //     title: "Customer Name",
+            //     type: "select",
+            //     name: "customerId",
+            //     options: Customers,
+            // }
 
         ],
     };
@@ -329,12 +330,12 @@ const MakePaymentSales = () => {
         const searchPayload = {
             fromDate: values.fromDate || null,
             toDate: values.toDate || null,
-            customerId: values.customerId || null,
+            customerId: values?.customerId || null,
             type: "SALES"
         };
 
         const result = await post(api + "/invoiceHeader/search", searchPayload);
-         console.log(" res for filt",result)
+        console.log(" res for filt", result)
         if (response.ok) {
             setSaless(result || []);
         } else {

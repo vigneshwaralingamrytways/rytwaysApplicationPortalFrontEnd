@@ -62,26 +62,31 @@ const MakePaymentPurchase = () => {
 
     const loadPurchases = useCallback(async () => {
         // const data = await get(api + "/invoiceHeader/getAll/" + "PURCHASE");
-        const data = await get(api + "/invoiceHeader/getAll/PURCHASE?rand=" + Math.random());
+
+        const val = {
+            type: "PURCHASE",
+            isFilter: "NO"
+        }
+        const data = await post(api + "/invoiceHeader/getAll/", val);
         // const data = await get(api + `/makePayment/getAll/PURCHASE?rand=${Math.random()}`)
         console.log(" all data  purch..", data)
         if (response.ok) {
-            // if (Array.isArray(data)) {
-            //   const newData = data.map(invoice => {
 
-            //     return {
-            //       ...invoice,
+            setPurchases(data||[])
 
-            //     }
-            //   })
-            // console.log("new data all", data)
-            setPurchases(data)
-            setAllPurchases(data);
             // }
 
 
         }
 
+        const value = {
+            type: "PURCHASE",
+            isFilter: "YES"
+        }
+        const dataFilter = await post(api + "/invoiceHeader/getAll/", value);
+        if (dataFilter) {
+            setAllPurchases(dataFilter||[]);
+        }
         // setPurchases(...data,suppliers);
     }, [get, response]);
 
@@ -297,14 +302,14 @@ const MakePaymentPurchase = () => {
                 type: "date",
                 inpprops: {},
             },
-            {
-                title: "Supplier Name",
-                type: "select",
-                name: "supplierId",
-                contains: "select",
-                options: suppliers,
-                validationProps: "Supplier is required",
-            },
+            // {
+            //     title: "Supplier Name",
+            //     type: "select",
+            //     name: "supplierId",
+            //     contains: "select",
+            //     options: suppliers,
+            //     validationProps: "Supplier is required",
+            // },
 
         ],
     };

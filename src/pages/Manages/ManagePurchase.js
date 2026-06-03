@@ -19,7 +19,7 @@ import { saveAs } from "file-saver";
 const ManagePurchase = (props) => {
   const { isReconsile } = props;
 
-  const { get, del, response } = useFetch({ data: [] });
+  const { get, del, post, response } = useFetch({ data: [] });
   const dispatch = useDispatch();
 
   const [allPurchases, setAllPurchases] = useState([]);
@@ -128,12 +128,27 @@ const ManagePurchase = (props) => {
 
   const loadPurchases = useCallback(async () => {
     // const data = await get(api + "/invoiceHeader/getAll/PURCHASE");
-    const data = await get(api + "/invoiceHeader/getAll/PURCHASE?t=" + Date.now());
+
+    const val = {
+      type: "PURCHASE",
+      isFilter: "NO"
+    }
+    const data = await post(api + "/invoiceHeader/getAll", val);
     console.log("load data for all purchases", data)
     if (response.ok) {
-      setPurchases(data);
-      setAllPurchases(data);
+      setPurchases(data || []);
+
     }
+
+    const value = {
+      type: "PURCHASE",
+      isFilter: "YES"
+    }
+    const dataFilter = await post(api + "/invoiceHeader/getAll", value);
+    if (dataFilter) {
+      setAllPurchases(dataFilter || []);
+    }
+
   }, [get, response]);
 
   useEffect(() => {
@@ -403,12 +418,12 @@ const ManagePurchase = (props) => {
         name: "toDate",
         type: "date",
       },
-      {
-        title: "Supplier Name",
-        type: "select",
-        name: "supplierId",
-        options: suppliers,
-      },
+      // {
+      //   title: "Supplier Name",
+      //   type: "select",
+      //   name: "supplierId",
+      //   options: suppliers,
+      // },
     ],
   };
 
