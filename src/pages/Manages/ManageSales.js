@@ -106,7 +106,7 @@ const ManageSales = (props) => {
       type: "SALES",
       isFilter: "NO"
     }
-    const data = await post(api + "/invoiceHeader/getAll", val);
+    const data = await post(api + "/invoiceHeader/getAll?t=" + Date.now(), val);
     console.log("all sales data")
     console.table(data)
     if (response.ok) {
@@ -320,10 +320,10 @@ const ManageSales = (props) => {
           serviceType={serviceType}
           Customers={Customers}
           AllCustomers={AllCustomers}
-          onCancel={() => {
+          onCancel={async () => {
             setIsSlideOpen(false);
             setActiveForm(null);
-            loadSaless();
+           await  loadSaless();
           }}
           validate={validate}
           actions={actions}
@@ -346,10 +346,10 @@ const ManageSales = (props) => {
           referenceType="SALES"
           uploadTitle="Sales Invoice Upload"
           financialYear={Sales.invoiceHeader?.invoiceDate}
-          onCancel={() => {
+          onCancel={async () => {
             setIsSlideOpen(false);
             setActiveForm(null);
-            loadSaless();
+            await loadSaless();
           }}
           validate={validate}
         />
@@ -434,23 +434,9 @@ const ManageSales = (props) => {
     ],
   };
 
-  return (
-    <div
-      className={classes.container}
-      style={{
-        position: "relative",
-        width: "100%",
-        height: '100%'
-      }}
-    >
-      {/* ? Table */}
-      <div
-        style={{
-          transition: "0.4s ease",
-          opacity: isSlideOpen ? 0 : 1,
-          pointerEvents: isSlideOpen ? "none" : "auto",
-        }}
-      >
+ return (
+    <div className={classes.container} style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden" }}>
+      <div style={{ transition: "0.4s ease", opacity: isSlideOpen ? 0 : 1, pointerEvents: isSlideOpen ? "none" : "auto" }}>
         <NewTable
           cols={ManageSalesTable(showFormHandler, actions, false, isReconsile)}
           data={Saless}

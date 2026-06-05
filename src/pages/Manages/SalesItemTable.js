@@ -32,6 +32,8 @@ const SalesItemTable = (showFormHandler, actions,serviceType) => {
             align: "right",
             val: "amount",
             render: (rowData) => <span>{rowData?.amount}</span>,
+            // render: (rowData) => <span>{rowData?.buyingPrice}</span>,
+            
         },
         {
             title: "Tax (%)",

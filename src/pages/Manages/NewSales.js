@@ -443,7 +443,7 @@ const NewSales = ({ selectedItem,
       setItemFormData([]);
       return;
     }
-    const data = await get(api + `/invoiceDetails/getAll?rand=${Math.random()}`);
+    const data = await get(`${api}/invoiceDetails/getAll?t=${Date.now()}`);
 
     console.log(" data for invoice detils items ,,,", data)
 
@@ -542,6 +542,7 @@ const NewSales = ({ selectedItem,
       // const res = await post(api + "/invoiceHeader/create", val);
       let res;
       if (headerIdRef.current && !isCopy) {
+        console.log(" test===", headerIdRef.current)
         res = await put(api + "/invoiceHeader/update/" + headerIdRef.current, val);
         if (!response.ok) {
           AlertHandler(res?.message || "Failed to update Invoice Header", "danger");
@@ -681,7 +682,15 @@ const NewSales = ({ selectedItem,
         };
 
 
-        const res = await post(`${api}/paymentDetails/create/${headerId}`, val);
+        // const res = await post(`${api}/paymentDetails/create/${headerId}`, val);
+        let res;
+        if (paymentFormData && paymentFormData.paymentDetailsId) {
+          console.log("Updating existing payment :", paymentFormData.paymentDetailsId);
+          res = await put(`${api}/paymentDetails/update/${paymentFormData.paymentDetailsId}?t=${Date.now()}`, val);
+        } else {
+          console.log("Creating new payments");
+         res = await post(`${api}/paymentDetails/create/${headerId}?t=${Date.now()}`, val);
+        }
         console.log("..data go for  pyment create  ", val)
         console.log(" res for sdave payemnt", res)
         if (res) {
@@ -862,7 +871,7 @@ const NewSales = ({ selectedItem,
           watchFields={["serviceTypeId", "amount", "buyingPrice"]}
           onSubmit={handleAddItem}
           onCancel={() => setEditingItem({})}
-          buttonName="Add"
+          buttonName={editingItem?.invoiceDetailsId ? "Update" : "Add"}
           validate={syncItemData}
         />
         <NewTable
@@ -879,6 +888,7 @@ const NewSales = ({ selectedItem,
           actions={actions}
           onSubmit={onSubmit}
           // buttonName="Search"
+
           showFilterIcon={false}
           validate={validate}
         />
@@ -892,7 +902,8 @@ const NewSales = ({ selectedItem,
 
           onSubmit={handleSavePayment}
           onCancel={onCancel}
-          buttonName="Save"
+          // buttonName="Save"
+          buttonName={paymentFormData?.paymentDetailsId ? "Update" : "Save"}
           validate={validate}
         />
 

@@ -74,10 +74,10 @@ const ManagePurchase = (props) => {
   // ? SLIDE CLOSE FUNCTION
   // ============================
 
-  const closeSlide = () => {
+  const closeSlide = async () => {
     setIsSlideOpen(false);
     setActiveForm(null);
-    loadPurchases();
+    await loadPurchases();
   };
 
   // ============================
@@ -133,7 +133,7 @@ const ManagePurchase = (props) => {
       type: "PURCHASE",
       isFilter: "NO"
     }
-    const data = await post(api + "/invoiceHeader/getAll", val);
+    const data = await post(api + "/invoiceHeader/getAll?t=" + Date.now(), val);
     console.log("load data for all purchases", data)
     if (response.ok) {
       setPurchases(data || []);

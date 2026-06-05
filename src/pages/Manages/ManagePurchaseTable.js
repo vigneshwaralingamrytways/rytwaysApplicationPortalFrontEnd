@@ -44,6 +44,22 @@ const ManagePurchaseTable = (
         ),
       },
       {
+        title: "Gross Amount",
+        align: "right",
+        val: "grossAmount",
+        render: (row) => (
+          <span>{row.paymentDetails?.grossAmount || 0}</span>
+        ),
+      },
+      {
+        title: "Total GST",
+        align: "right",
+        val: "totalGst",
+        render: (row) => (
+          <span>{row.paymentDetails?.totalGst || 0}</span>
+        ),
+      },
+      {
         title: "Net Total",
         align: "right",
         val: "netTotal",
@@ -108,99 +124,101 @@ const ManagePurchaseTable = (
   }
 
   // ACTION COLUMN
-  columns.push({
-    title: "Actions",
-    align: "center",
-    render: (row) => {
-      const rowId =
-        row.invoiceHeader?.invoiceNo ||
-        row.invoiceHeaderId;
+  if (!isGst) {
+    columns.push({
+      title: "Actions",
+      align: "center",
+      render: (row) => {
+        const rowId =
+          row.invoiceHeader?.invoiceNo ||
+          row.invoiceHeaderId;
 
-      return (
-        <div style={{ position: "relative" }}>
-          <FaIcons.FaEllipsisV
-            style={{ cursor: "pointer" }}
-            onClick={() => toggleMenu(rowId)}
-          />
+        return (
+          <div style={{ position: "relative" }}>
+            <FaIcons.FaEllipsisV
+              style={{ cursor: "pointer" }}
+              onClick={() => toggleMenu(rowId)}
+            />
 
-          {openRow === rowId && (
-            <div
-              style={{
-                position: "absolute",
-                right: 0,
-                top: "22px",
-                background: "#fff",
-                border: "1px solid #ddd",
-                borderRadius: "6px",
-                boxShadow:
-                  "0 2px 10px rgba(0,0,0,0.15)",
-                padding: "10px",
-                display: "flex",
-                flexDirection: "column",
-                gap: "8px",
-                zIndex: 1000,
-                minWidth: "120px",
-              }}
-            >
-              <div
-                style={{ cursor: "pointer", display: "flex", gap: "6px" }}
-                onClick={() => {
-                  setOpenRow(null);
-                  showFormHandler(row, actions[2])();
-                }}
-              >
-                <FaIcons.FaUpload />
-                <span>Upload</span>
-              </div>
-
-              <div
-                style={{ cursor: "pointer", display: "flex", gap: "6px" }}
-                onClick={() => {
-                  setOpenRow(null);
-                  showFormHandler(row, actions[0])();
-                }}
-              >
-                <FaIcons.FaEdit />
-                <span>Edit</span>
-              </div>
-
+            {openRow === rowId && (
               <div
                 style={{
-                  cursor: "pointer",
+                  position: "absolute",
+                  right: 0,
+                  top: "22px",
+                  background: "#fff",
+                  border: "1px solid #ddd",
+                  borderRadius: "6px",
+                  boxShadow:
+                    "0 2px 10px rgba(0,0,0,0.15)",
+                  padding: "10px",
                   display: "flex",
-                  gap: "6px",
-                  color: "red",
-                }}
-                onClick={() => {
-                  setOpenRow(null);
-                  showFormHandler(row, actions[3])();
+                  flexDirection: "column",
+                  gap: "8px",
+                  zIndex: 1000,
+                  minWidth: "120px",
                 }}
               >
-                <FaIcons.FaTrash />
-                <span>Delete</span>
+                <div
+                  style={{ cursor: "pointer", display: "flex", gap: "6px" }}
+                  onClick={() => {
+                    setOpenRow(null);
+                    showFormHandler(row, actions[2])();
+                  }}
+                >
+                  <FaIcons.FaUpload />
+                  <span>Upload</span>
+                </div>
+
+                <div
+                  style={{ cursor: "pointer", display: "flex", gap: "6px" }}
+                  onClick={() => {
+                    setOpenRow(null);
+                    showFormHandler(row, actions[0])();
+                  }}
+                >
+                  <FaIcons.FaEdit />
+                  <span>Edit</span>
+                </div>
+
+                <div
+                  style={{
+                    cursor: "pointer",
+                    display: "flex",
+                    gap: "6px",
+                    color: "red",
+                  }}
+                  onClick={() => {
+                    setOpenRow(null);
+                    showFormHandler(row, actions[3])();
+                  }}
+                >
+                  <FaIcons.FaTrash />
+                  <span>Delete</span>
+                </div>
+                <div
+                  style={{
+                    cursor: "pointer",
+                    display: "flex",
+                    gap: "6px",
+
+                  }}
+                  onClick={() => {
+                    setOpenRow(null);
+                    showFormHandler(row, actions[4])();
+                  }}
+                >
+                  <FaIcons.FaPrint />
+                  <span>Print</span>
+                </div>
+
               </div>
-               <div
-                style={{
-                  cursor: "pointer",
-                  display: "flex",
-                  gap: "6px",
-                   
-                }}
-                onClick={() => {
-                  setOpenRow(null);
-                  showFormHandler(row, actions[4])();
-                }}
-              >
-                <FaIcons.FaPrint />
-                <span>Print</span>
-              </div>
-              
-            </div>
-          )}
-        </div>
-      );
-    },
-  });
+            )}
+          </div>
+        );
+      },
+    });
+  }
 
   return columns;
 };
