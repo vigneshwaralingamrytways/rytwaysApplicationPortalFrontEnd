@@ -86,7 +86,9 @@ const ManageTicket = (props) => {
 
 
     const loadTickets = useCallback(async () => {
-        const allTickets = await get(api + "/bookTickets/getAllAssignedTickets");
+        const allTickets = await get(
+    api + `/bookTickets/getAllAssignedTickets?t=${Date.now()}`
+);
         console.log("all ticktes", allTickets)
         if (response.ok) {
             setTicketData(allTickets);
@@ -300,7 +302,7 @@ const ManageTicket = (props) => {
         console.log("res for start", res)
         if (res && response.ok) {
             AlertHandler("Work started successfully", "success");
-            loadActivityLogs(item.ticketId);
+            await loadActivityLogs(item.ticketId);
         } else {
             AlertHandler("Failed to start work", "danger");
         }
@@ -317,7 +319,7 @@ const ManageTicket = (props) => {
 
         if (res && response.ok) {
             AlertHandler("Work stopped successfully", "success");
-            loadActivityLogs(item.ticketId);
+            await loadActivityLogs(item.ticketId);
         } else {
             AlertHandler("Failed to stop work", "danger");
         }
@@ -395,7 +397,7 @@ const ManageTicket = (props) => {
     };
 
     const loadActivityLogs = useCallback(async (ticketId) => {
-        const data = await get(api + `/activityLogs/ticket/${ticketId}`);
+        const data = await get(api + `/activityLogs/ticket/${ticketId}?t=${Date.now()}`);
 
         if (response.ok) {
             setActivityLogs(prev => ({
@@ -432,7 +434,9 @@ const ManageTicket = (props) => {
     }, [get, response]);
 
     const loadStatuses = useCallback(async () => {
-        const data = await get(api + "/status/getAllByStatusType/TICKET");
+    const data = await get(
+    api + `/status/getAllByStatusType/TICKET?t=${Date.now()}`
+);
         console.log("status list", data)
         if (response.ok) {
             setStatusList(
@@ -449,7 +453,7 @@ const ManageTicket = (props) => {
         loadEmployees()
         loadStatuses();
 
-    }, []);
+    }, [statusList]);
     const handleCloseTicket = async (item) => {
         const remarks = window.prompt("Enter closing remarks:");
 
@@ -459,17 +463,19 @@ const ManageTicket = (props) => {
         }
 
         try {
-            const notesRes = await put(`${api}/bookTickets/closeNotes/${item.ticketId}/${(remarks)}`);
-
+            const notesRes = await put(
+                `${api}/bookTickets/closeNotes/${item.ticketId}/${remarks}?t=${Date.now()}`
+            );
             if (response.ok) {
                 const statusUpdate = {
                     ...item,
                     statusId: 28,
                     completedOn: new Date().toISOString().split('T')[0]
                 };
-
-                await put(`${api}/bookTickets/update/${item.ticketId}`, statusUpdate);
-
+                const statusUpt = await put(
+                    `${api}/bookTickets/update/${item.ticketId}?t=${Date.now()}`,
+                    statusUpdate
+                );
                 if (response.ok) {
                     AlertHandler("Ticket closed successfully", "success");
                     await loadTickets();

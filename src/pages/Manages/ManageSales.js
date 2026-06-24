@@ -107,8 +107,8 @@ const ManageSales = (props) => {
       isFilter: "NO"
     }
     const data = await post(api + "/invoiceHeader/getAll?t=" + Date.now(), val);
-    console.log("all sales data")
-    console.table(data)
+    // console.log("all sales data")
+    // console.table(data)
     if (response.ok) {
       setSaless(data || []);
 
@@ -189,11 +189,11 @@ const ManageSales = (props) => {
       else {
         setPreviewPopup(false);
         AlertHandler("Failed to download file", "danger");
-        console.log("fail to docnlods", response)
+        // console.log("fail to docnlods", response)
       }
     } catch (err) {
       setPreviewPopup(false);
-      console.log("errors,", err);
+      // console.log("errors,", err);
     }
   };
 
@@ -217,10 +217,10 @@ const ManageSales = (props) => {
       }
       else {
         AlertHandler("Failed to download file", "danger");
-        console.log("fail to docnlods", response)
+        // console.log("fail to docnlods", response)
       }
     } catch (err) {
-      console.log("errors,", err);
+      // console.log("errors,", err);
     }
   };
 
@@ -263,7 +263,7 @@ const ManageSales = (props) => {
       }
     } catch (err) {
       setPreviewPopup(false);
-      console.log("errors,", err);
+      // console.log("errors,", err);
     }
   };
 
@@ -323,7 +323,7 @@ const ManageSales = (props) => {
           onCancel={async () => {
             setIsSlideOpen(false);
             setActiveForm(null);
-           await  loadSaless();
+            await loadSaless();
           }}
           validate={validate}
           actions={actions}
@@ -338,13 +338,13 @@ const ManageSales = (props) => {
     if (action === "Upload") {
       setActiveForm(
         <Upload
-          key={`upload-form-${Date.now()}`}  // ? FIXED: Unique key
+
           referenceId={
             Sales.invoiceHeader?.invoiceHeaderId ||
             Sales.invoiceHeaderId
           }
           referenceType="SALES"
-          uploadTitle="Sales Invoice Upload"
+          uploadTitle={"Upload Sales Invoice - " + Sales.invoiceHeader?.invoiceNo}
           financialYear={Sales.invoiceHeader?.invoiceDate}
           onCancel={async () => {
             setIsSlideOpen(false);
@@ -370,46 +370,15 @@ const ManageSales = (props) => {
   };
 
   /* ---------------- Search Filter ---------------- */
-  const onSubmit = (values) => {
+  const onSubmit = async (values) => {
     const { fromDate, toDate, customerId } = values;
 
-    if (!fromDate && !toDate && !customerId) {
+    if (!values) {
       setSaless(allSales);
       return;
     }
-
-    const filtered = allSales.filter((item) => {
-      const header = item.invoiceHeader ? item.invoiceHeader : item;
-
-      const itemCustomerId =
-        header.customerId || header.customer?.customerId;
-
-      const customerMatch = customerId
-        ? String(itemCustomerId) === String(customerId)
-        : true;
-
-      let dateMatch = true;
-      if (header.invoiceDate) {
-        const itemDate = new Date(header.invoiceDate).setHours(
-          0,
-          0,
-          0,
-          0
-        );
-        const from = fromDate
-          ? new Date(fromDate).setHours(0, 0, 0, 0)
-          : null;
-        const to = toDate
-          ? new Date(toDate).setHours(0, 0, 0, 0)
-          : null;
-
-        dateMatch =
-          (!from || itemDate >= from) && (!to || itemDate <= to);
-      }
-
-      return customerMatch && dateMatch;
-    });
-
+    const filtered = await post(api + "/invoiceHeader/search", values)
+console.log("filt==",filtered)
     setSaless(filtered);
   };
 
@@ -434,7 +403,7 @@ const ManageSales = (props) => {
     ],
   };
 
- return (
+  return (
     <div className={classes.container} style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden" }}>
       <div style={{ transition: "0.4s ease", opacity: isSlideOpen ? 0 : 1, pointerEvents: isSlideOpen ? "none" : "auto" }}>
         <NewTable

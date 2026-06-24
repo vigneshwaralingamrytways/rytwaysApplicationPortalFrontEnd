@@ -6,7 +6,7 @@
  --primary-color: #11121256;
  --button-bg-color:rgba(0, 0, 0, 0.671);
  --submain-mobile-bgcolor:rgba(36, 7, 222, 0.087);
- --login-image:url('../images/top-view-vivid-plant-with-notepad_11zon.jpg');
+ --login-image:url('../images/rytways (1).png');
 }
 
 
@@ -43,7 +43,7 @@ html {
 
  height: 100%;
  width: 64.5%;
- /* background-image: var(--login-image);  */
+ background-image: var(--login-image); 
  background-size: cover; 
  background-repeat: no-repeat;
  padding: 0px;

@@ -10,7 +10,7 @@ const ManageSalesTable = (showFormHandler, actions, isGst, isReconsile) => {
         title: "Invoice No",
         align: "left",
         val: "invoiceNo",
-        render: (row) => <span>{row.invoiceHeader?.invoiceNo}</span>,
+        render: (row) => <span>{row.invoiceHeader?.invoiceNo||row.invoiceNo}</span>,
       },
       {
         title: "Invoice Date",
@@ -113,14 +113,24 @@ const ManageSalesTable = (showFormHandler, actions, isGst, isReconsile) => {
       title: "Margin Amount",
       align: "left",
       render: (row) => (
-        <span>{row.paymentDetails?.totalMarginAmount ||0}</span>
+        <span>{row.paymentDetails?.totalMarginAmount || 0}</span>
+        // <span>{row.paymentDetails?.totalMarginAmount !== null || Number(row.paymentDetails?.totalMarginAmount) ===0.00 ? row.paymentDetails?.totalMarginAmount : row.paymentDetails?.grossAmount || 0}</span>
+        // <span>
+        //   {
+        //     row.paymentDetails?.totalMarginAmount === null ||
+        //       row.paymentDetails?.totalMarginAmount === 0 ||
+        //       row.paymentDetails?.totalMarginAmount === undefined
+        //       ? row.paymentDetails?.grossAmount || 0
+        //       : row.paymentDetails.totalMarginAmount
+        //   }
+        // </span>
       ),
     },
-     {
+    {
       title: "Buying Price",
       align: "left",
       render: (row) => (
-        <span>{row.paymentDetails?.totalBuyingPrice ||0}</span>
+        <span>{row.paymentDetails?.totalBuyingPrice || 0}</span>
       ),
     },
     {

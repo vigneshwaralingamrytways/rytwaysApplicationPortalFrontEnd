@@ -11,6 +11,7 @@ import {
 import StatusMasterTable from "./StatusMasterTable";
 import NewStatus from "./NewStatus";
 import NewTable from "../../Components/NewTable/NewTable";
+import { filterActions } from "../../store/filter-slice";
 
 const StatusMaster = (props) => {
   const { get, del, post, response } = useFetch({ data: [] });
@@ -25,7 +26,28 @@ const StatusMaster = (props) => {
   const [showAlert] = useSelector((state) => [
     state.alertProps.showAlert,
   ]);
+  const [activityId] = useSelector((state) => [
+    state.sideBar.activityId
+  ]);
+  const savedData = useSelector(
+    state => state.filter.filterData
+  );
+  // const savedFilters = useSelector((state) => state.filter.filters[activityId] || {});
+  useEffect(() => {
+    const current =
+      savedData.find(
+        x => x.activityId === activityId
+      );
 
+
+    if (current) {
+      setStatus(current.data);
+    }
+    else {
+      loadStatuses();
+    }
+  }, []);
+  console.log("acr id==", activityId)
   // ? Alert Handler
   const AlertHandler = (alertContent, alertType) => {
     dispatch(
@@ -47,7 +69,7 @@ const StatusMaster = (props) => {
         contains: "text",
         validationProps: "Status name is required",
       },
-       {
+      {
         title: "Status Type",
         type: "text",
         name: "statusType",
@@ -89,12 +111,25 @@ const StatusMaster = (props) => {
       if (response.ok) {
         AlertHandler("status updated", "success");
 
-        setStatus((prev) =>
-          prev.map((c) =>
-            c.statusId === updatestatus.statusId ? updatestatus : c
-          )
+        // setStatus((prev) =>
+        //   prev.map((c) =>
+        //     c.statusId === updatestatus.statusId ? updatestatus : c
+        //   )
+        // );
+        const updatedData = status.map(x =>
+          x.statusId === updatestatus.statusId
+            ? updatestatus
+            : x
         );
 
+        setStatus(updatedData);
+        dispatch(
+          filterActions.updateFilterData({
+            activityId,
+            data: updatedData
+          })
+        );
+        // searchDetails(val);
         closeSlide();
       } else {
         AlertHandler("updation failed", "danger");
@@ -105,7 +140,7 @@ const StatusMaster = (props) => {
       if (response.ok) {
         AlertHandler("status saved", "success");
         setStatus([...status, newstatus]);
-
+        // searchDetails(val)
         closeSlide();
       } else {
         AlertHandler("status not saved", "danger");
@@ -119,7 +154,19 @@ const StatusMaster = (props) => {
 
     if (response.ok) {
       AlertHandler("status deleted", "success");
-      setStatus((prev) => prev.filter((c) => c.statusId !== statusId));
+      // setStatus((prev) => prev.filter((c) => c.statusId !== statusId));
+      const updatedData = status.filter(
+        x => x.statusId !== statusId
+      );
+
+      setStatus(updatedData);
+
+      dispatch(
+        filterActions.updateFilterData({
+          activityId,
+          data: updatedData
+        })
+      );
     } else {
       AlertHandler("Failed to delete status", "danger");
     }
@@ -135,6 +182,20 @@ const StatusMaster = (props) => {
 
       if (returnObject.length > 0) {
         setStatus(returnObject);
+        dispatch(
+          filterActions.setFilters({
+            activityId,
+            values
+          })
+        );
+
+
+        dispatch(
+          filterActions.updateFilterData({
+            activityId,
+            data: returnObject
+          })
+        );
       } else {
         setStatus([]);
       }
@@ -182,6 +243,7 @@ const StatusMaster = (props) => {
         <NewTable
           cols={StatusMasterTable(showFormHandler, actions)}
           data={status}
+          activityId={activityId}
           striped
           rows={25}
           title="Status Master"

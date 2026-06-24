@@ -528,8 +528,8 @@ const steps = [
         })}
       </div>
   
-      <div className={classes.wizardCard}>
-        <div className={classes.greenHeader}>
+      <div className={classes.wizardCard} style={step === 2 ? { maxWidth: "1150px"} : {}}>
+        <div className={classes.greenHeader} style={step === 2 ? { maxWidth: "1150px"} : {}}>
           {` ${processTittle} / ${functionTittle}`}
           {step === 1 && (
             <FaIcons.FaEdit
@@ -549,7 +549,7 @@ const steps = [
           )}
         </div>
   
-        <div className={classes.stepContent}>{renderContent()}</div>
+        <div className={classes.stepContent} style={step === 2 ? { maxWidth: "1150px"} : {}}>{renderContent()}</div>
       </div>
   
       <div className={classes.stepButtons}>

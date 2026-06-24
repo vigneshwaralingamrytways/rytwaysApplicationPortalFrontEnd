@@ -13,7 +13,7 @@ export const QueryCommentsTable = (showFormHandler, actions) => {
       title: 'Source',
       align: 'center',
       render: rowData => {
-        return <span >{rowData?.source?.charAt(0) || ""}</span>;
+        return <span >{rowData?.source?.charAt(0) || "N/A"}</span>;
       },
     },
     {

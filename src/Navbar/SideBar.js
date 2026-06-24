@@ -10,6 +10,7 @@ import { useHistory } from "react-router-dom";
 import Logo from "../images/rytways-logo(1).png";
 import { DynamicSideMenu } from "./SidebarModulewise/DynamicSideMenu";
 import MobileTopBar from "./MobileTopBar";
+import { FaCommentDots } from "react-icons/fa";
 
 const SideMenu = styled(Row)`margin: 0; padding: 0;`;
 const SidebarNav = styled(Col)`
@@ -35,7 +36,7 @@ const LogoImage = styled.img`
   cursor: pointer;
 `;
 
-function SideBar() {
+function SideBar(props) {
   const dispatch = useDispatch();
   const history = useHistory();
   const { post, response } = useFetch({ data: [] });
@@ -69,14 +70,14 @@ function SideBar() {
   }, [loadInitialMenues]);
 
   const setModuleId = () => {
-  const currentPath = history.location.pathname;
-  
-  // Only navigate if not already on process page
-  if (currentPath !== "/processModule") {
-    dispatch(moduleActions.selectModuleId({ moduleId: "" }));
-    history.push("/processModule");
-  }
-};
+    const currentPath = history.location.pathname;
+
+    // Only navigate if not already on process page
+    if (currentPath !== "/processModule") {
+      dispatch(moduleActions.selectModuleId({ moduleId: "" }));
+      history.push("/processModule");
+    }
+  };
 
   const handleActivityClick = (activity) => {
     dispatch(moduleActions.selectActivityId({ activityId: activity.id }));
@@ -85,6 +86,35 @@ function SideBar() {
 
   if (isMobile) return <MobileTopBar />;
 
+
+  const BottomFixedContainer = styled.div`
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: ${({ sidebarOpen }) => (sidebarOpen ? '17.6%' : '17.6%')};
+    background-color: #d4fd52;
+    z-index: 1001;
+    padding: 0.5rem 0;
+    display: flex;
+    justify-content: center;
+  
+    @media (max-width: 600px) {
+      width: ${({ sidebarOpen }) => (sidebarOpen ? '100%' : '0%')};
+    }
+  `;
+  const IconContainer = styled.div`
+    font-size: ${({ sidebarOpen }) => (sidebarOpen ? '1rem' : '2rem')};
+    transition: font-size 0.3s ease;
+    margin: ${({ sidebarOpen }) => (sidebarOpen ? 'auto 0' : 'auto')};
+    display: flex;
+    ${({ sidebarOpen }) => !sidebarOpen && 'justify-content: center;'}
+    align-items: center;
+    ${({ sidebarOpen }) => !sidebarOpen && 'padding: .2rem 0;'}
+  `;
+
+  const onClick = () => {
+    history.push("/process/querySolutions")
+  }
   return (
     <SideMenu>
       <SidebarNav>
@@ -102,6 +132,13 @@ function SideBar() {
             />
           ))}
         </SidebarWrap>
+        <BottomFixedContainer sidebarOpen={props.sidebar} onClick={() => onClick()} style={{ cursor: "pointer" }}>
+          <IconContainer
+            sidebarOpen={props.sidebar}
+          >
+            <FaCommentDots size={24} color="black" />
+          </IconContainer>
+        </BottomFixedContainer>
       </SidebarNav>
     </SideMenu>
   );

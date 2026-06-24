@@ -23,6 +23,7 @@ import { filterActions } from "../../store/filter-slice";
 import classes from "./NewTable.module.css";
 import { FaSync } from 'react-icons/fa';
 import { FaRedo } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 
 
@@ -111,7 +112,7 @@ const Table = ({
   template,
   onRowClick,
   selectedRowId,
-  
+  activityId,
   rowwise,
   validate,
   onCancel,
@@ -133,15 +134,26 @@ const Table = ({
   totalElements,
   sortOrder,
   enableSearch = true,
-  hideSNo, approvalDate, showPlusCircle = false, showPrintIcon = false, showprExcelIcon = false, showExcelIcon = false, handleAddClick, handleExcelIcon, handlePrintIcon
+  hideSNo, approvalDate,
+  showPlusCircle = false,
+  showPrintIcon = false, showprExcelIcon = false,
+  showExcelIcon = false,
+  handleAddClick, handleExcelIcon, handlePrintIcon
   , handlePrExcelIcon }) => {
+
+
+  // const activityId = useSelector(state => state.sideBar.activityId);
+  const savedFilters = useSelector(state => {
+    const foundFilter = state.filter.filters.find(f => f.activityId === activityId);
+    return foundFilter && foundFilter.values ? foundFilter.values : {};
+  });
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(rows ? rows : 10);
   const [rowsOptions, setRowsOptions] = React.useState(rows < 10 ? [5, 10, 25, 50, 100] : [10, 25, 50, 100]);
   const [fullscreen, setFullscreen] = useState(false);
   const [filtersAnchorEl, setFiltersAnchorEl] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [colSearchQuery, setColSearchQuery] = useState({});
+  const [colSearchQuery, setColSearchQuery] = useState(savedFilters || {});
   const [colVal, setColVal] = useState("");
   const [sortConfig, setSortConfig] = useState(null);
   const [searchBoxesVisibility, setSearchBoxesVisibility] = useState({});
@@ -274,9 +286,9 @@ const Table = ({
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-
-
-  const { register, handleSubmit, reset, setValue, getValues, watch, formState: { errors }, clearErrors } = useForm({ defaultValues: { ...defaultValues } });
+  const { register, handleSubmit, reset, setValue, getValues, watch, formState: { errors }, clearErrors } = useForm({
+    defaultValues: Object.keys(savedFilters).length > 0 ? savedFilters : { ...defaultValues }
+  });
 
   //   const onSubmit = (values) => {
   //   // For each filter field, update the relevant filter state
@@ -288,9 +300,10 @@ const Table = ({
     reset(defaultValues); // reset filters to initial values
     setColSearchQuery({});
     setFiltersActive(false);
-   if (onSubmit) {
-  onSubmit({});
-}
+    dispatch(filterActions.clearActivityFilter(activityId));
+    if (onSubmit) {
+      onSubmit({});
+    }
   };
   // const watchedFilters = watch(); // watch all filter fields
 
@@ -323,6 +336,12 @@ const Table = ({
 
   const handleFilterSubmit = (values) => {
     setColSearchQuery(values);
+    dispatch(
+      filterActions.setFilters({
+        activityId: activityId,
+        values: values
+      })
+    );
     const hasActiveFilters = Object.values(values).some(val => val && val.toString().trim() !== "");
     setFiltersActive(hasActiveFilters);
     if (onSubmit) {
@@ -330,8 +349,32 @@ const Table = ({
       onSubmit(values);
 
     }
+    reset(values);
   }
+  const previousActivity = useRef(activityId);
+  useEffect(() => {
+    if (Object.keys(savedFilters).length > 0) {
+      reset(savedFilters);
+    } else {
+      reset({ ...defaultValues });
+    }
+  }, [savedFilters, reset, defaultValues]);
+  useEffect(() => {
 
+    if (previousActivity.current !== activityId) {
+
+      setColSearchQuery({});
+
+      dispatch(
+        filterActions.clearActivityFilter(
+          previousActivity.current
+        )
+      );
+
+      previousActivity.current = activityId;
+    }
+
+  }, [activityId]);
   // --- Render function for filter fields ---
   const renderFilterField = (field) => {
     const name = field.name;

@@ -101,11 +101,11 @@ function Responsewiz(props) {
 
             {
                 title: "Notes",
-                type: "richtext",
+                type: "text",
                 name: "commentNotes",
-                contains: "richtext",
+                contains: "text",
                 inpprops: {
-                    // md: 3
+                    // md: 12
                 },
             },
             {

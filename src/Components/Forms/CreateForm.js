@@ -641,6 +641,11 @@ const renderFields = (
                         className={`form-control ${dynamicclassname ? classes[dynamicclassname] : horizontal ? classes.horizontalText : classes.formBorder}`}
                         wrapperClassName="d-block w-100"
                       />
+                      <input
+                        type="hidden"
+                        id={name}
+                        {...register(name, { required: validationProps })}
+                      />
                       {errors[name] && (
                         <Form.Text className="text-danger">
                           {errors[name]["message"]}

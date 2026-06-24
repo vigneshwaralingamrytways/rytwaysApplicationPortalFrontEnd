@@ -8,7 +8,9 @@ import { Route } from 'react-router-dom';
 const Modules = React.lazy(() => import('./pages/Modules/Modules'));
 const Login = React.lazy(() => import('./pages/Login'));
 
-const QueryAndSolution = React.lazy(() => import('./pages/QueryAndSolution/QueryAndSolution'));
+
+const QueryAndSolution = React.lazy(() => import('./pages/QueryAndSolution/Wizard/ActivityWiz'));
+// const QueryAndSolution = React.lazy(() => import('./pages/QueryAndSolution/QueryAndSolution'));
 const ProcessQuery = React.lazy(() => import('./pages/QueryAndSolution/ProcessQuery'));
 const ProcessMasterQuery = React.lazy(() => import('./pages/QueryAndSolution/ProcessMasterQuery'));
 const ProcessMasterSearch = React.lazy(() => import('./pages/QueryAndSolution/ProcessMasterSearch'));
@@ -99,6 +101,7 @@ const AssignTicketView=React.lazy(() => import('./pages/Manages/AssignTicketView
 const IssueTypeMaster=React.lazy(() => import('./pages/Master/IssueType'));
 
 const SacCodeMaster=React.lazy(() => import('./pages/Manages/SacCodeMaster'));
+const ManageAllComments = React.lazy(() => import('./pages/QueryAndSolution/Wizard/ManageAllComments'));
 
 export default [
 
@@ -124,6 +127,11 @@ export default [
     <Route path='/released' exact component={ReleaseInfo} />,
     <Route path='/MakePayment' exact component={MakePayment} />,
     <Route path='/BookProject' exact component={BookProject} />,
+
+
+     <Route path='/ManageAllComments' exact component={ManageAllComments} />,
+
+
 
     <Route path='/ManageAMC' exact component={ManageAMC} />,
     <Route path='/ManageEmployee' exact component={ManageEmployee} />,

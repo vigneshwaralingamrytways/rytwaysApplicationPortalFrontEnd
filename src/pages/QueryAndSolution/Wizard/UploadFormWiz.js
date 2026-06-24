@@ -144,7 +144,7 @@ function UploadFormWiz(props) {
             }, */
             {
                 title: "Upload Document",
-                type: "MultiDocument",
+                type: "Document",
                 name: "file",
                 contains: "Document",
                 inpprops: {

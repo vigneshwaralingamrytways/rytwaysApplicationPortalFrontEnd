@@ -11,6 +11,7 @@ import {
     useFetch,
     useSelector
 } from '../../../../Components/CommonImports/CommonImports';
+import FunctionWizTable from '../Table/FunctionWizTable';
 import { generateToken } from '../../../../Components/GenerateToken';
 
 
@@ -20,7 +21,7 @@ const rowWiseFields = 3;
 function ProcCommWiz(props) {
 
 
-    const { get, post, response, loading, error } = useFetch({ data: [] });
+    const { get, post, response, cache, loading, error } = useFetch({ data: [] });
 
     const [data, setData] = useState([]);
     const [defaultValue, setDefaultValue] = useState(props?.selectedItem || {});
@@ -103,7 +104,7 @@ function ProcCommWiz(props) {
                 type: 'select',
                 name: 'commentType',
                 contains: 'Select',
-                options: [...props.commentType,{value:"Bug",label:"Bug"}],
+                options: [...props.commentType, { value: "Bug", label: "Bug" }],
                 validationProps: "Value is required",
             }, {
                 title: "Comment",
@@ -112,6 +113,23 @@ function ProcCommWiz(props) {
                 contains: "textarea",
 
                 inpprops: { md: 8 },
+            },
+            {
+                title: "Upload Document",
+                type: "Document",
+                name: "file",
+                contains: "Document",
+                inpprops: {
+                    md: 4,
+                },
+            }, {
+                title: "Remarks",
+                type: "textarea",
+                name: "remarks",
+                contains: "textarea",
+                inpprops: {
+                    md: 8,
+                },
             },
             {
                 type: "hidden",
@@ -133,13 +151,58 @@ function ProcCommWiz(props) {
 
     }
 
-    
-
-    function onSubmit(values) {
-        values.commentStatus=  values?.commentStatus || "Created"
-        props.onSubmitTwo(values)
 
 
+    // function onSubmit(values) {
+    //     values.commentStatus = values?.commentStatus || "Created"
+
+
+    //     props.onSubmitTwo(values)
+
+
+    // }
+    async function onSubmit(values) {
+        const commentPayload = {
+            commentType: values.commentType,
+            issueComments: values.issueComments,
+            commentId: values.commentId,
+            commentStatus: values?.commentStatus || "Created",
+            issueId: props.selectedItem?.issueId || "",
+            source: "Testing"
+        };
+
+        const savedCommentResult = await post(api + "/issueSolution/createComments", commentPayload);
+        console.log(" sav res commnts", savedCommentResult)
+        if (response.ok && savedCommentResult && savedCommentResult.commentId && values.file && values.file.length > 0) {
+            const generatedCommentId = savedCommentResult.commentId;
+            const formData = new FormData();
+
+            for (let i = 0; i < values.file.length; i++) {
+                formData.append("files", values.file[i]);
+            }
+
+            formData.append("reportType", "Activity");
+            formData.append("remarks", values.remarks || "");
+            formData.append("queryId", generatedCommentId);
+            formData.append("filePath", "COMMENT/");
+
+            const uploadResult = await post(api + "/queryDoc/uploadFile", formData);
+            cache.clear();
+            console.log(" file res", uploadResult)
+            if (uploadResult && uploadResult.retValues && uploadResult.retValues.status === 1) {
+                AlertHandler("Comment and Files Uploaded Successfully", "success");
+                dispatch(modalActions.hideModalHandler());
+                if (props.loadInitialCustomers) props.loadInitialCustomers();
+            } else {
+                AlertHandler("Comment Saved, but File Upload Failed", "danger");
+            }
+        } else if (response.ok && savedCommentResult) {
+            AlertHandler("Comments Saved Successfully", "success");
+            dispatch(modalActions.hideModalHandler());
+            if (props.loadInitialCustomers) props.loadInitialCustomers();
+        } else {
+            AlertHandler("Comments Failed To Save", "danger");
+        }
     }
 
     return (
@@ -161,7 +224,7 @@ function ProcCommWiz(props) {
 
                 ></CreateForm>
 
-                
+
             </Popupcard>
 
         </div>

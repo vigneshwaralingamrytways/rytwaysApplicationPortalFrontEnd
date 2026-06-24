@@ -47,19 +47,23 @@ const BookTicket = (props) => {
     };
 
     const validate = (watchValues, { setError, clearErrors }) => {
-        if (watchValues.expectedTime) {
-            const selectedTime = new Date(watchValues.expectedTime).getTime();
-            const currentTime = new Date().getTime();
+        // if (watchValues.expectedTime) {
+        //     const selectedTime = new Date(watchValues.expectedTime).getTime();
+        //     const currentTime = new Date().getTime();
 
-            if (selectedTime < currentTime) {
-                setError("expectedTime", {
-                    type: "manual",
-                    message: "Expected Time cannot be in the past",
-                });
-            } else {
-                clearErrors("expectedTime");
-            }
+        //     if (selectedTime < currentTime) {
+        //         setError("expectedTime", {
+        //             type: "manual",
+        //             message: "Expected Time cannot be in the past",
+        //         });
+        //     } else {
+        //         clearErrors("expectedTime");
+        //     }
+        // }
+        if (watchValues.expectedTime) {
+            clearErrors("expectedTime");
         }
+
         return true;
     };
 
@@ -333,9 +337,9 @@ const BookTicket = (props) => {
                 name: "expectedTime",
                 contains: "time",
                 inpprops: {
-                    min: new Date().toISOString().split('T')[0]
+                    // min: new Date().toISOString().split('T')[0]
                 },
-                validationProps: "Raised by is required"
+                validationProps: "Expected On is required"
             },
             {
                 title: "Ticket Raised By",
@@ -343,7 +347,7 @@ const BookTicket = (props) => {
                 name: "ticketRaisedBy",
                 contains: "text",
                 inpprops: {},
-                validationProps: "Raised by is required"
+                validationProps: "Ticket Raised by is required"
             },
             // {
             //     title: "Status",
