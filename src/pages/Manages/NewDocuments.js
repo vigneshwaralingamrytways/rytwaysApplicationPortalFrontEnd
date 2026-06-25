@@ -79,7 +79,7 @@ export default function NewDocuments({
   const saveDocuments = useCallback(async (value) => {
 
     console.log("vaues for save", value)
-    const res = await post(api + "document/createDocument?t=" + Date.now(), value)
+    const res = await post(api + "/document/createDocument?t=" + Date.now(), value)
     if (response.ok) {
       SetDocuments(res)
       onCancel();
@@ -118,7 +118,7 @@ export default function NewDocuments({
       feildValue: value.feildValue,
     };
     console.log("values", val)
-    const res = await post(api + "/feilds/createFeilds", val);
+    const res = await post(api + "/feilds/createFeilds?t="+Date.now(), val);
     console.log("resulkt ", res)
     if (response.ok) {
       AlertHandler("feilds are saved", "succuss")

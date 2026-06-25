@@ -22,7 +22,7 @@ const ViewdDocumentsTable = (showFormHandler, documents) => {
       render: (rowData) => {
 
         const dateItem = rowData?.documentsFeilds?.find(
-          (item) => item.feildName === "Date"
+          (item) => item.feildName === "date"
         );
         return <span>{dateItem?.feildValue || "-"}</span>;
       },

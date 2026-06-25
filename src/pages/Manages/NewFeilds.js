@@ -137,7 +137,7 @@ export default function NewFeilds({
         };
         console.log("values", value)
         console.log("val ", val)
-        const res = await post(api + "/feilds/createFeilds", val);
+        const res = await post(api + "/feilds/createFeilds?t="+Date.now(), val);
         console.log("result ", res)
         if (response.ok || res) {
             // setFieldsList(res);

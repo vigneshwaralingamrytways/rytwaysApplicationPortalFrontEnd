@@ -43,7 +43,8 @@ const GenerateDocument = ({ document, onCancel, defaultValues, validate, selecte
   }, []);
 
   const loadFields = async () => {
-    const res = await get(api + `/feilds/getAll/${document.documentId}?=t=${Date.now()}`);
+
+    const res = await get(api + `/feilds/getAll/${document.documentId}?t=${Date.now()}`);
     if (response.ok) {
       setFields(res);
     }
@@ -75,11 +76,14 @@ const GenerateDocument = ({ document, onCancel, defaultValues, validate, selecte
 
   const handleGenerate = async (docItem) => {
     if (!docItem || !docItem.documentId) return;
-    const res = await get(api + "/document/generate/" + docItem.documentId);
+    const res = await get(
+      api + "/document/generate/" + docItem.documentId + "?t=" + Date.now()
+    );
+
     if (response.ok) {
       console.log("Response:", res);
       AlertHandler("Document Generated & Saved Successfully!", "success");
-        await  loadFields();
+      await loadFields();
     } else {
       console.log("Error Response:", response);
       AlertHandler("Failed to generate document", "danger");
@@ -94,11 +98,15 @@ const GenerateDocument = ({ document, onCancel, defaultValues, validate, selecte
     };
     console.log("values", value)
     console.log("val ", val)
-    const res = await post(api + "/feilds/createFeilds?t=" + Date.now(), val);
+    const res = await post(
+      api + "/feilds/createFeilds?t=" + Date.now(),
+      val
+    );
+
     console.log("result ", res)
     if (response.ok) {
       AlertHandler("feild is saved", "success")
-     await  loadFields();
+      await loadFields();
     } else {
       AlertHandler("feilds are not saved", "danger")
       console.log("Failed to save field ", response);
@@ -113,7 +121,7 @@ const GenerateDocument = ({ document, onCancel, defaultValues, validate, selecte
 
     <div className={classes.container}>
       <Popupcard
-        title={"Generate Document" } showBack onBack={onCancel}>
+        title={"Generate Document"} showBack onBack={onCancel}>
         <CreateForm
           template={template}
           rowwise={3}

@@ -130,7 +130,10 @@ export default function NewParagraph({
             documentId: selectedItem.documentId
         }
         console.log("value fro save the para val:", val)
-        const res = await post(api + "/paragraph/create", val);
+        const res = await post(
+            api + "/paragraph/create?t=" + Date.now(),
+            val
+        );
         if (response.ok || res) {
             AlertHandler(
                 value.paragraphId ? "Paragraph updated successfully" : "Paragraph added successfully",

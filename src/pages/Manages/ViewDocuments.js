@@ -34,7 +34,7 @@ const ViewDocuments = ({ document, onCancel }) => {
     const loadDocuments = useCallback(async () => {
 
 
-        const res = await get(api + "/document/getAll/document");
+        const res = await get(api + "/document/getAll/document?t=" + Date.now());
         if (response.ok) {
             const result = Array.isArray(res)
                 ? res.filter(doc => doc.isPdfGenerated === true)
@@ -56,7 +56,9 @@ const ViewDocuments = ({ document, onCancel }) => {
 
     const handleDownload = async (rowData) => {
         try {
-            const res = await get(api + `/document/download/${rowData.documentId}`);
+            const res = await get(
+                api + `/document/download/${rowData.documentId}?t=${Date.now()}`
+            );
             if (response.ok) {
                 const blob = await response.blob();
                 saveAs(blob, `${rowData.documentTitle}.pdf`);
