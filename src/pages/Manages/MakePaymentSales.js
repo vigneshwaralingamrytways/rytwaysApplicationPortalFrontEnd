@@ -34,6 +34,17 @@ const MakePaymentSales = () => {
         setRefreshKey(prev => prev + 1);
         loadSaless();
     };
+    const activityId = useSelector(state => state.sideBar.activityId);
+
+    const savedFilters = useSelector(state => {
+        const found = state.filter.filters.find(f => f.activityId === activityId);
+        return found ? found.values : null;
+    });
+
+    const hasActiveFilter = (filters) =>
+        filters && Object.values(filters).some(
+            v => v !== undefined && v !== null && v !== ""
+        );
     /* ? Slide State */
     const [isSlideOpen, setIsSlideOpen] = useState(false);
     const [activeForm, setActiveForm] = useState(null);
@@ -90,11 +101,11 @@ const MakePaymentSales = () => {
     const loadSaless = useCallback(async () => {
         const val = {
             type: "SALES",
-            isFilter: "NO"
-        }
-        const data = await post(api + "/invoiceHeader/getAll", val);
+            isFilter: hasActiveFilter(savedFilters) ? "YES" : "NO"
+        };
+        const data = await post(api + "/invoiceHeader/getAll?t=" + Date.now(), val);
         console.log(" all data ..", data)
-        console.table(data)
+        // console.table(data)
         if (response.ok) {
             console.log("new data all", data)
             setSaless(data || [])
@@ -110,11 +121,17 @@ const MakePaymentSales = () => {
         }
 
         // setSaless(...data,Customers);
-    }, [get, response]);
-
+    }, [get, response, savedFilters]);
     useEffect(() => {
-        loadSaless();
-    }, [loadSaless]);
+        if (hasActiveFilter(savedFilters)) {
+            onSubmit(savedFilters);
+        } else {
+            loadSaless();
+        }
+    }, [activityId]);
+    // useEffect(() => {
+    //     loadSaless();
+    // }, [loadSaless]);
 
     const [paymentModeList, setPaymentModeList] = useState([]);
 
@@ -283,10 +300,15 @@ const MakePaymentSales = () => {
     // }, [loadPaymentSummary])
 
     const showFormHandler = (payment, actions) => () => {
-        const closeSlide = () => {
+        const closeSlide = async () => {
             setIsSlideOpen(false);
             setActiveForm(null);
-            loadSaless();
+            // loadSaless();
+            if (hasActiveFilter(savedFilters)) {
+                await onSubmit(savedFilters);
+            } else {
+                await loadSaless();
+            }
         };
 
         if (actions === "Transaction") {
@@ -326,23 +348,23 @@ const MakePaymentSales = () => {
             setIsSlideOpen(true);
         }
     };
-    const onSubmit = async (values) => {
-        const searchPayload = {
-            fromDate: values.fromDate || null,
-            toDate: values.toDate || null,
-            customerId: values?.customerId || null,
-            type: "SALES"
-        };
+    // const onSubmit = async (values) => {
+    //     const searchPayload = {
+    //         fromDate: values.fromDate || null,
+    //         toDate: values.toDate || null,
+    //         customerId: values?.customerId || null,
+    //         type: "SALES"
+    //     };
 
-        const result = await post(api + "/invoiceHeader/search", searchPayload);
-        console.log(" res for filt", result)
-        if (response.ok) {
-            setSaless(result || []);
-        } else {
-            setSaless([]);
-            // AlertHandler("Search failed", "danger");
-        }
-    };
+    //     const result = await post(api + "/invoiceHeader/search", searchPayload);
+    //     console.log(" res for filt", result)
+    //     if (response.ok) {
+    //         setSaless(result || []);
+    //     } else {
+    //         setSaless([]);
+    //         // AlertHandler("Search failed", "danger");
+    //     }
+    // };
 
     // const onSubmit = (values) => {
     //     const { fromDate, toDate, customerId } = values;
@@ -387,55 +409,37 @@ const MakePaymentSales = () => {
     //     setSaless(filtered);
     // };
 
+    const onSubmit = async (values) => {
+        if (!values || Object.keys(values).length === 0) {
+            const val = {
+                type: "SALES",
+                isFilter: "NO"
+            };
+            const data = await post(api + "/invoiceHeader/getAll?t=" + Date.now(), val);
+            if (response.ok) {
+                setSaless(data || []);
+            }
+        }
+        else {
+            const searchPayload = {
+                fromDate: values.fromDate || null,
+                toDate: values.toDate || null,
+                 
+                typeOfHeader: "SALES"
+            };
 
-
+            const result = await post(api + "/invoiceHeader/search?t=" + Date.now(), searchPayload);
+            if (response.ok) {
+                setSaless(result || []);
+            } else {
+                setSaless([]);
+            }
+        }
+    };
     function validate() {
 
     }
-
-
-
-    const MakePaymentSaleFilter = {
-        fields: [
-            {
-                title: "From Date",
-                name: "fromDate",
-                type: "date",
-                inpprops: {},
-            },
-            {
-                title: "To Date",
-                name: "toDate",
-                type: "date",
-                inpprops: {},
-            },
-            {
-                title: "Customer Name",
-                type: "select",
-                name: "customerId",
-                options: Customers,
-            }
-
-            // {
-            //   title: "Bank Name",
-            //   name: "bankName",
-            //   type: "select",
-            //   options: Payment, 
-            //   inpprops: {},
-            // },
-            // {
-            //   title: "Payment Mode",
-            //   name: "paymentMode",
-            //   type: "select",
-            //   options: [
-            //     { value: "Cash", label: "Cash" },
-            //     { value: "Bank Transfer", label: "Bank Transfer" },
-            //     { value: "Cheque", label: "Cheque" },
-            //   ],
-            //   inpprops: {},
-            // },
-        ],
-    };
+ 
     const actions = ["upload", "Payment", "Transaction"];
     return (
         <div className={classes.container} style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden" }}>
@@ -445,6 +449,7 @@ const MakePaymentSales = () => {
                 pointerEvents: isSlideOpen ? "none" : "auto",
             }}>
                 <NewTable
+                    activityId={activityId}
                     cols={MakePaymentSalesTable(showFormHandler, actions)}
                     data={Saless}
                     striped

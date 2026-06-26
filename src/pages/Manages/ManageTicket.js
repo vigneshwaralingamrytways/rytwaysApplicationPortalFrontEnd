@@ -20,7 +20,7 @@ import ViewActivityLogTable from "./ViewActivityLogTable";
 const ManageTicket = (props) => {
     const { get, del, post, put, response } = useFetch({ data: [] });
     const dispatch = useDispatch();
-
+    const activityId = useSelector((state) => state.sideBar.activityId);
     const [ticketData, setTicketData] = useState([]);
     const [filteredTicketData, setFilteredTicketData] = useState([]);
     const [employeeList, setEmployeeList] = useState([]);
@@ -87,8 +87,8 @@ const ManageTicket = (props) => {
 
     const loadTickets = useCallback(async () => {
         const allTickets = await get(
-    api + `/bookTickets/getAllAssignedTickets?t=${Date.now()}`
-);
+            api + `/bookTickets/getAllAssignedTickets?t=${Date.now()}`
+        );
         console.log("all ticktes", allTickets)
         if (response.ok) {
             setTicketData(allTickets);
@@ -434,9 +434,9 @@ const ManageTicket = (props) => {
     }, [get, response]);
 
     const loadStatuses = useCallback(async () => {
-    const data = await get(
-    api + `/status/getAllByStatusType/TICKET?t=${Date.now()}`
-);
+        const data = await get(
+            api + `/status/getAllByStatusType/TICKET?t=${Date.now()}`
+        );
         console.log("status list", data)
         if (response.ok) {
             setStatusList(
@@ -557,6 +557,8 @@ const ManageTicket = (props) => {
                         editingStatusId,
                         setEditingStatusId)}
                     data={filteredTicketData}
+                    autoApply={true}
+                    activityId={activityId}
                     striped
                     rows={25}
                     title="Manage Tickets"

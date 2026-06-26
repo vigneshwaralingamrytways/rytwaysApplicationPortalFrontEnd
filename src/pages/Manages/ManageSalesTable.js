@@ -10,7 +10,7 @@ const ManageSalesTable = (showFormHandler, actions, isGst, isReconsile) => {
         title: "Invoice No",
         align: "left",
         val: "invoiceNo",
-        render: (row) => <span>{row.invoiceHeader?.invoiceNo||row.invoiceNo}</span>,
+        render: (row) => <span>{row.invoiceHeader?.invoiceNo}</span>,
       },
       {
         title: "Invoice Date",
@@ -95,18 +95,18 @@ const ManageSalesTable = (showFormHandler, actions, isGst, isReconsile) => {
     {
       title: "Invoice No",
       align: "right",
-      render: (row) => <span>{row.invoiceHeader?.invoiceNo}</span>,
+      render: (row) => <span>{row.invoiceHeader?.invoiceNo||row.invoiceNo}</span>,
     },
     {
       title: "Invoice Date",
       align: "left",
-      render: (row) => <span>{row.invoiceHeader?.invoiceDate}</span>,
+      render: (row) => <span>{row.invoiceHeader?.invoiceDate ||row.invoiceDate}</span>,
     },
     {
       title: "Customer Name",
       align: "left",
       render: (row) => (
-        <span>{row.invoiceHeader?.customer?.customerName}</span>
+        <span>{row.invoiceHeader?.customer?.customerName||row.customer?.customerName}</span>
       ),
     },
     {

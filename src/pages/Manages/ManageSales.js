@@ -18,7 +18,23 @@ const ManageSales = (props) => {
   const { isReconsile } = props;
   const { get, post, del, response } = useFetch({ data: [] });
   const dispatch = useDispatch();
+  const activityId = useSelector(state => state.sideBar.activityId);
+  const savedFilters = useSelector(state => {
+    const found = state.filter.filters.find(f => f.activityId === activityId);
+    return found ? found.values : null;
+  });
+  // useEffect(() => {
+  //   const hasFilters = savedFilters && Object.values(savedFilters).some(
+  //     v => v !== undefined && v !== null && v !== ""
+  //   );
 
+  //   if (hasFilters) {
+  //     onSubmit(savedFilters);
+  //   } else {
+  //     loadSaless();
+  //   }
+
+  // }, [activityId, savedFilters]);
   const [selectedSales, setSelectedSales] = useState([]);
   const [Saless, setSaless] = useState([]);
   const [allSales, setAllSales] = useState([]);
@@ -99,34 +115,67 @@ const ManageSales = (props) => {
   }, [loadServiceType]);
 
   /* ---------------- Load Sales ---------------- */
+  // const loadSaless = useCallback(async () => {
+  //   // const data = await get(api + "/invoiceHeader/getAll/SALES");
+
+  //   const val = {
+  //     type: "SALES",
+  //     isFilter: "NO"
+  //   }
+  //   const data = await post(api + "/invoiceHeader/getAll?t=" + Date.now(), val);
+  //   // console.log("all sales data")
+  //   // console.table(data)
+  //   if (response.ok) {
+  //     setSaless(data || []);
+
+  //   }
+
+  //   const value = {
+  //     type: "SALES",
+  //     isFilter: "YES"
+  //   }
+  //   const dataFilter = await post(api + "/invoiceHeader/getAll", value);
+  //   if (dataFilter) {
+  //     setAllSales(dataFilter || []);
+  //   }
+  // }, [get, response]);
+
+  // useEffect(() => {
+  //   loadSaless();
+  // }, [loadSaless]);
+  const hasActiveFilter = (filters) =>
+    filters && Object.values(filters).some(
+      v => v !== undefined && v !== null && v !== ""
+    );
   const loadSaless = useCallback(async () => {
-    // const data = await get(api + "/invoiceHeader/getAll/SALES");
 
-    const val = {
-      type: "SALES",
-      isFilter: "NO"
-    }
-    const data = await post(api + "/invoiceHeader/getAll?t=" + Date.now(), val);
-    // console.log("all sales data")
-    // console.table(data)
-    if (response.ok) {
-      setSaless(data || []);
-
-    }
 
     const value = {
       type: "SALES",
-      isFilter: "YES"
+      isFilter: hasActiveFilter(savedFilters) ? "YES" : "NO"
+    };
+    console.log("==== init cal load sale val", value)
+    const data = await post(
+      api + "/invoiceHeader/getAll?t=" + Date.now(),
+      value
+    );
+
+    if (response.ok) {
+      setSaless(data || []);
+      setAllSales(data || []);
     }
-    const dataFilter = await post(api + "/invoiceHeader/getAll", value);
-    if (dataFilter) {
-      setAllSales(dataFilter || []);
-    }
-  }, [get, response]);
+
+  }, [post, response, savedFilters]);
 
   useEffect(() => {
-    loadSaless();
-  }, [loadSaless]);
+
+    if (hasActiveFilter(savedFilters)) {
+      onSubmit(savedFilters);
+    } else {
+      loadSaless();
+    }
+
+  }, [activityId]);
 
   /* ---------------- Delete Sales ---------------- */
   const deleteSales = async (id) => {
@@ -323,7 +372,12 @@ const ManageSales = (props) => {
           onCancel={async () => {
             setIsSlideOpen(false);
             setActiveForm(null);
-            await loadSaless();
+            // await loadSaless();
+            if (hasActiveFilter(savedFilters)) {
+              await onSubmit(savedFilters);
+            } else {
+              await loadSaless();
+            }
           }}
           validate={validate}
           actions={actions}
@@ -344,12 +398,17 @@ const ManageSales = (props) => {
             Sales.invoiceHeaderId
           }
           referenceType="SALES"
-          uploadTitle={"Upload Sales Invoice - " + Sales.invoiceHeader?.invoiceNo}
+          uploadTitle={"Upload Sales Invoice - " + Sales.invoiceHeader?.invoiceNo ||Sales.invoiceNo}
           financialYear={Sales.invoiceHeader?.invoiceDate}
           onCancel={async () => {
             setIsSlideOpen(false);
             setActiveForm(null);
-            await loadSaless();
+            if (hasActiveFilter(savedFilters)) {
+              await onSubmit(savedFilters);
+            } else {
+              await loadSaless();
+            }
+            // await loadSaless();
           }}
           validate={validate}
         />
@@ -370,16 +429,34 @@ const ManageSales = (props) => {
   };
 
   /* ---------------- Search Filter ---------------- */
-  const onSubmit = async (values) => {
-    const { fromDate, toDate, customerId } = values;
+  // const onSubmit = async (values) => {
+  //   const { fromDate, toDate, customerId } = values;
 
-    if (!values) {
+  //   if (!values) {
+  //     setSaless(allSales);
+  //     return;
+  //   }
+  //   const filtered = await post(api + "/invoiceHeader/search", values)
+  //   console.log("filt==", filtered)
+  //   setSaless(filtered);
+  // };
+  const onSubmit = async (values) => {
+    console.log("=== onsubmits", values)
+   if (!values || Object.keys(values).length === 0){
+      console.log("===11")
       setSaless(allSales);
-      return;
+      console.log("===12")
+
+    } else {
+      console.log("===13")
+      const val = {
+        ...values,
+        typeOfHeader: "SALES"
+      }
+      const filtered = await post(api + "/invoiceHeader/search", val);
+      console.log("===14")
+      setSaless(filtered);
     }
-    const filtered = await post(api + "/invoiceHeader/search", values)
-console.log("filt==",filtered)
-    setSaless(filtered);
   };
 
   const filterTemplate = {
@@ -422,6 +499,7 @@ console.log("filt==",filtered)
           onSubmit={onSubmit}
           buttonName="Search"
           validate={validate}
+          activityId={activityId}
         />
       </div>
 

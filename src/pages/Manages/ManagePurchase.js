@@ -21,7 +21,16 @@ const ManagePurchase = (props) => {
 
   const { get, del, post, response } = useFetch({ data: [] });
   const dispatch = useDispatch();
+  const activityId = useSelector(state => state.sideBar.activityId);
 
+  const savedFilters = useSelector(state => {
+    const found = state.filter.filters.find(f => f.activityId === activityId);
+    return found ? found.values : null;
+  });
+  const hasActiveFilter = (filters) =>
+    filters && Object.values(filters).some(
+      v => v !== undefined && v !== null && v !== ""
+    );
   const [allPurchases, setAllPurchases] = useState([]);
   const [purchases, setPurchases] = useState([]);
 
@@ -77,7 +86,12 @@ const ManagePurchase = (props) => {
   const closeSlide = async () => {
     setIsSlideOpen(false);
     setActiveForm(null);
-    await loadPurchases();
+    if (hasActiveFilter(savedFilters)) {
+      await onSubmit(savedFilters);
+    } else {
+      await loadPurchases();
+    }
+    // await loadPurchases();
   };
 
   // ============================
@@ -124,14 +138,14 @@ const ManagePurchase = (props) => {
 
   // ============================
   // LOAD PURCHASES
-  // ============================
+  // ============================ 
 
   const loadPurchases = useCallback(async () => {
     // const data = await get(api + "/invoiceHeader/getAll/PURCHASE");
 
     const val = {
       type: "PURCHASE",
-      isFilter: "NO"
+      isFilter: hasActiveFilter(savedFilters) ? "YES" : "NO"
     }
     const data = await post(api + "/invoiceHeader/getAll?t=" + Date.now(), val);
     console.log("load data for all purchases", data)
@@ -140,20 +154,28 @@ const ManagePurchase = (props) => {
 
     }
 
-    const value = {
-      type: "PURCHASE",
-      isFilter: "YES"
-    }
-    const dataFilter = await post(api + "/invoiceHeader/getAll", value);
-    if (dataFilter) {
-      setAllPurchases(dataFilter || []);
-    }
+    // const value = {
+    //   type: "PURCHASE",
+    //   isFilter: "YES"
+    // }
+    // const dataFilter = await post(api + "/invoiceHeader/getAll", value);
+    // if (dataFilter) {
+    //   setAllPurchases(dataFilter || []);
+    // }
 
-  }, [get, response]);
+  }, [get, response, savedFilters]);
 
+  // useEffect(() => {
+  //   loadPurchases();
+  // }, [loadPurchases]);
   useEffect(() => {
-    loadPurchases();
-  }, [loadPurchases]);
+    if (hasActiveFilter(savedFilters)) {
+      onSubmit(savedFilters);
+    } else {
+      loadPurchases();
+    }
+  }, [activityId]);
+
 
   // ============================
   // DELETE PURCHASE
@@ -312,6 +334,7 @@ const ManagePurchase = (props) => {
       // ? OPEN SLIDE
       setActiveForm(
         <NewPurchase
+          isEdit={isEdit}
           selectedItem={data}
           serviceType={serviceType}
           suppliers={suppliers}
@@ -364,44 +387,71 @@ const ManagePurchase = (props) => {
   // SEARCH FILTER
   // ============================
 
-  function onSubmit(values) {
-    const { fromDate, toDate, supplierId } = values;
+  // function onSubmit(values) {
+  //   const { fromDate, toDate, supplierId } = values;
 
-    if (!fromDate && !toDate && !supplierId) {
-      setPurchases(allPurchases);
-      return;
-    }
+  //   if (!fromDate && !toDate && !supplierId) {
+  //     setPurchases(allPurchases);
+  //     return;
+  //   }
 
-    const filtered = allPurchases.filter((item) => {
-      const header = item.invoiceHeader || {};
-      const itemSupplierId =
-        header.supplierId || header.supplier?.supplierId;
+  //   const filtered = allPurchases.filter((item) => {
+  //     const header = item.invoiceHeader || {};
+  //     const itemSupplierId =
+  //       header.supplierId || header.supplier?.supplierId;
 
-      const supplierMatch = supplierId
-        ? String(itemSupplierId) === String(supplierId)
-        : true;
+  //     const supplierMatch = supplierId
+  //       ? String(itemSupplierId) === String(supplierId)
+  //       : true;
 
-      let dateMatch = true;
+  //     let dateMatch = true;
 
-      if (header.invoiceDate) {
-        const itemDate = new Date(header.invoiceDate).setHours(0, 0, 0, 0);
-        const from = fromDate
-          ? new Date(fromDate).setHours(0, 0, 0, 0)
-          : null;
-        const to = toDate
-          ? new Date(toDate).setHours(0, 0, 0, 0)
-          : null;
+  //     if (header.invoiceDate) {
+  //       const itemDate = new Date(header.invoiceDate).setHours(0, 0, 0, 0);
+  //       const from = fromDate
+  //         ? new Date(fromDate).setHours(0, 0, 0, 0)
+  //         : null;
+  //       const to = toDate
+  //         ? new Date(toDate).setHours(0, 0, 0, 0)
+  //         : null;
 
-        dateMatch =
-          (!from || itemDate >= from) && (!to || itemDate <= to);
+  //       dateMatch =
+  //         (!from || itemDate >= from) && (!to || itemDate <= to);
+  //     }
+
+  //     return supplierMatch && dateMatch;
+  //   });
+
+  //   setPurchases(filtered);
+  // }
+
+  const onSubmit = async (values) => {
+    console.log("=== onsubmits", values)
+    if (!values || Object.keys(values).length === 0) {
+      console.log("===11")
+      // setPurchases(purchases);
+      const val = {
+        type: "PURCHASE",
+        isFilter: "NO"
+      };
+      const data = await post(api + "/invoiceHeader/getAll?t=" + Date.now(), val);
+
+      if (response.ok) {
+        setPurchases(data || []);
       }
+      console.log("===12")
 
-      return supplierMatch && dateMatch;
-    });
-
-    setPurchases(filtered);
-  }
-
+    } else {
+      console.log("===13")
+      const val = {
+        ...values,
+        typeOfHeader: "PURCHASE"
+      }
+      const filtered = await post(api + "/invoiceHeader/search", val);
+      console.log("===14")
+      setPurchases(filtered);
+    }
+  };
   // ============================
   // FILTER TEMPLATE
   // ============================
@@ -467,6 +517,7 @@ const ManagePurchase = (props) => {
           buttonName="Search"
           validate={validate}
           handleExcelIcon={handleExcel}
+          activityId={activityId}
         />
       </div>
 

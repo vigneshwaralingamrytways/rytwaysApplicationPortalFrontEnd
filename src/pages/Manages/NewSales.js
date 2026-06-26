@@ -828,7 +828,7 @@ const NewSales = ({ selectedItem,
       <Popupcard
         title={
           isEdit
-            ? `Edit Sales Invoice - ${headerFormRef.current.invoiceNo || ""}`
+            ? `Edit Sales Invoice - ${headerFormRef.current.invoiceNo ||selectedItem?.invoiceNo ||""}`
             : "Add Sales Invoice"
         }
         showBack onBack={onCancel}

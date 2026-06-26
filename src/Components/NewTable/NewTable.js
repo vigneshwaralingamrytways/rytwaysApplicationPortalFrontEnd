@@ -297,10 +297,14 @@ const Table = ({
   // };
 
   const handleRefreshFilters = () => {
-    reset(defaultValues); // reset filters to initial values
+     reset({ ...defaultValues });  // reset filters to initial values
     setColSearchQuery({});
     setFiltersActive(false);
     dispatch(filterActions.clearActivityFilter(activityId));
+     template?.fields?.forEach(field => {
+    setValue(field.name, "");
+  });
+
     if (onSubmit) {
       onSubmit({});
     }
@@ -335,6 +339,11 @@ const Table = ({
   const isFilterPopoverOpen = Boolean(filtersAnchorEl);
 
   const handleFilterSubmit = (values) => {
+    const hasActiveFilters = Object.values(values).some(val => val && val.toString().trim() !== "");
+    if (!hasActiveFilters) {
+      handleRefreshFilters();
+      return;
+    }
     setColSearchQuery(values);
     dispatch(
       filterActions.setFilters({
@@ -342,8 +351,9 @@ const Table = ({
         values: values
       })
     );
-    const hasActiveFilters = Object.values(values).some(val => val && val.toString().trim() !== "");
-    setFiltersActive(hasActiveFilters);
+
+
+    setFiltersActive(true);
     if (onSubmit) {
 
       onSubmit(values);
@@ -352,13 +362,29 @@ const Table = ({
     reset(values);
   }
   const previousActivity = useRef(activityId);
+  // useEffect(() => {
+  //   if (Object.keys(savedFilters).length > 0) {
+  //     reset(savedFilters);
+
+  //     if (onSubmit) {
+  //       onSubmit(savedFilters);
+  //     }
+  //   } else {
+  //     reset({ ...defaultValues });
+  //   }
+  // }, [savedFilters]);
   useEffect(() => {
-    if (Object.keys(savedFilters).length > 0) {
+    setColSearchQuery(savedFilters || {});
+
+    if (savedFilters && Object.keys(savedFilters).length > 0) {
       reset(savedFilters);
+      setFiltersActive(true);
     } else {
-      reset({ ...defaultValues });
+      reset(defaultValues);
+      setFiltersActive(false);
     }
-  }, [savedFilters, reset, defaultValues]);
+
+  }, [JSON.stringify(savedFilters)]);
   useEffect(() => {
 
     if (previousActivity.current !== activityId) {
@@ -546,8 +572,20 @@ const Table = ({
                           type="text"
                           placeholder={`Search ${headerItem.title}...`}
                           onChange={(e) => {
-                            setColSearchQuery(prev => ({ ...prev, [headerItem.val]: e.target.value }));
+                            const updated = {
+                              ...colSearchQuery,
+                              [headerItem.val]: e.target.value
+                            };
+
+                            setColSearchQuery(updated);
                             setColVal(headerItem.val);
+
+                            dispatch(
+                              filterActions.setFilters({
+                                activityId,
+                                values: updated
+                              })
+                            );
                           }}
                         />
                       )}

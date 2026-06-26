@@ -24,7 +24,17 @@ const MakePaymentPurchase = () => {
     /* ? Slide State */
     const [isSlideOpen, setIsSlideOpen] = useState(false);
     const [activeForm, setActiveForm] = useState(null);
+    const activityId = useSelector(state => state.sideBar.activityId);
 
+    const savedFilters = useSelector(state => {
+        const found = state.filter.filters.find(f => f.activityId === activityId);
+        return found ? found.values : null;
+    });
+
+    const hasActiveFilter = (filters) =>
+        filters && Object.values(filters).some(
+            v => v !== undefined && v !== null && v !== ""
+        );
 
     const [Payment, setPayment] = useState([]);
     const [purchases, setPurchases] = useState([]);
@@ -65,17 +75,14 @@ const MakePaymentPurchase = () => {
 
         const val = {
             type: "PURCHASE",
-            isFilter: "NO"
+            isFilter: hasActiveFilter(savedFilters) ? "YES" : "NO"
         }
         const data = await post(api + "/invoiceHeader/getAll/", val);
         // const data = await get(api + `/makePayment/getAll/PURCHASE?rand=${Math.random()}`)
         console.log(" all data  purch..", data)
         if (response.ok) {
 
-            setPurchases(data||[])
-
-            // }
-
+            setPurchases(data || [])
 
         }
 
@@ -85,15 +92,21 @@ const MakePaymentPurchase = () => {
         }
         const dataFilter = await post(api + "/invoiceHeader/getAll/", value);
         if (dataFilter) {
-            setAllPurchases(dataFilter||[]);
+            setAllPurchases(dataFilter || []);
         }
         // setPurchases(...data,suppliers);
     }, [get, response]);
 
+    // useEffect(() => {
+    //     loadPurchases();
+    // }, [loadPurchases]);
     useEffect(() => {
-        loadPurchases();
-    }, [loadPurchases]);
-
+        if (hasActiveFilter(savedFilters)) {
+            onSubmit(savedFilters);
+        } else {
+            loadPurchases();
+        }
+    }, [activityId]);
     const [paymentModeList, setPaymentModeList] = useState([]);
 
     const loadPaymentModes = useCallback(async () => {
@@ -199,14 +212,26 @@ const MakePaymentPurchase = () => {
 
         ]
     }
-    const handlePaymentSaved = () => {
-        loadPurchases();
+    // const handlePaymentSaved = () => {
+    //     loadPurchases();
+    // }
+    const handlePaymentSaved = async () => {
+        if (hasActiveFilter(savedFilters)) {
+            await onSubmit(savedFilters);
+        } else {
+            await loadPurchases();
+        }
     }
     const showFormHandler = (rowData, actions) => () => {
-        const closeSlide = () => {
+        const closeSlide = async () => {
             setIsSlideOpen(false);
             setActiveForm(null);
-            loadPurchases();
+            // loadPurchases();
+            if (hasActiveFilter(savedFilters)) {
+                await onSubmit(savedFilters);
+            } else {
+                await loadPurchases();
+            }
         };
         if (actions === "Delete") {
             // deletepayment(payment.id);
@@ -245,43 +270,69 @@ const MakePaymentPurchase = () => {
     };
 
 
-    function onSubmit(values) {
-        console.log("Search/filter values:", values);
+    // function onSubmit(values) {
+    //     console.log("Search/filter values:", values);
 
-        const { fromDate, toDate, supplierId } = values;
-        if (!fromDate && !toDate && !supplierId) {
-            setPurchases(allPurchases);
-            return;
-        }
+    //     const { fromDate, toDate, supplierId } = values;
+    //     if (!fromDate && !toDate && !supplierId) {
+    //         setPurchases(allPurchases);
+    //         return;
+    //     }
 
-        const filtered = allPurchases.filter((item) => {
-            const header = item.invoiceHeader || {};
-            const itemSupplierId = header.supplierId || header.supplier?.supplierId;
-            const supplierMatch = supplierId
-                ? String(itemSupplierId) === String(supplierId)
-                : true;
-            let dateMatch = true;
-            if (header.invoiceDate) {
-                const itemDate = new Date(header.invoiceDate).setHours(0, 0, 0, 0);
-                const from = fromDate ? new Date(fromDate).setHours(0, 0, 0, 0) : null;
-                const to = toDate ? new Date(toDate).setHours(0, 0, 0, 0) : null;
+    //     const filtered = allPurchases.filter((item) => {
+    //         const header = item.invoiceHeader || {};
+    //         const itemSupplierId = header.supplierId || header.supplier?.supplierId;
+    //         const supplierMatch = supplierId
+    //             ? String(itemSupplierId) === String(supplierId)
+    //             : true;
+    //         let dateMatch = true;
+    //         if (header.invoiceDate) {
+    //             const itemDate = new Date(header.invoiceDate).setHours(0, 0, 0, 0);
+    //             const from = fromDate ? new Date(fromDate).setHours(0, 0, 0, 0) : null;
+    //             const to = toDate ? new Date(toDate).setHours(0, 0, 0, 0) : null;
 
-                const isAfterFrom = from ? itemDate >= from : true;
-                const isBeforeTo = to ? itemDate <= to : true;
+    //             const isAfterFrom = from ? itemDate >= from : true;
+    //             const isBeforeTo = to ? itemDate <= to : true;
 
-                dateMatch = isAfterFrom && isBeforeTo;
-            } else if (fromDate || toDate) {
-                dateMatch = false;
+    //             dateMatch = isAfterFrom && isBeforeTo;
+    //         } else if (fromDate || toDate) {
+    //             dateMatch = false;
+    //         }
+
+
+    //         return supplierMatch && dateMatch;
+    //     });
+
+
+    //     setPurchases(filtered);
+    // }
+    const onSubmit = async (values) => {
+        if (!values || Object.keys(values).length === 0) {
+            const val = {
+                type: "PURCHASE",
+                isFilter: "NO"
+            };
+            const data = await post(api + "/invoiceHeader/getAll?t=" + Date.now(), val);
+            if (response.ok) {
+                setPurchases(data || []);
             }
+        }
+        else {
+            const searchPayload = {
+                fromDate: values.fromDate || null,
+                toDate: values.toDate || null,
+                // supplierId: values?.supplierId || null,
+                typeOfHeader: "PURCHASE"
+            };
 
-
-            return supplierMatch && dateMatch;
-        });
-
-
-        setPurchases(filtered);
-    }
-
+            const result = await post(api + "/invoiceHeader/search?t=" + Date.now(), searchPayload);
+            if (response.ok) {
+                setPurchases(result || []);
+            } else {
+                setPurchases([]);
+            }
+        }
+    };
     function validate() {
 
     }
@@ -322,6 +373,7 @@ const MakePaymentPurchase = () => {
                 pointerEvents: isSlideOpen ? "none" : "auto",
             }}>
                 <NewTable
+                activityId={activityId}
                     cols={MakePaymentPurchaseTable(showFormHandler, actions)}
                     data={purchases}
                     striped

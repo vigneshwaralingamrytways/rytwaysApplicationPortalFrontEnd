@@ -16,6 +16,7 @@ import PurchaseItemTable from "./PurchaseItemTable";
 
 const NewPurchase = ({
   selectedItem,
+  isEdit,
   onCancel,
   savePurchase,
   template,
@@ -528,7 +529,12 @@ useEffect(() => {
     []
   );
   return (
-    <Popupcard title="Add Purchase Invoice" showBack onBack={onCancel}>
+    //  title={
+    //       isEdit
+    //         ? `Edit Sales Invoice - ${headerFormRef.current.invoiceNo ||selectedItem?.invoiceNo ||""}`
+    //         : "Add Sales Invoice"
+    //     }
+    <Popupcard title={!isEdit?"Add Purchase Invoice":"Edit Purchase Invoice "+selectedItem?.invoiceNo }showBack onBack={onCancel}>
       <CreateForm
         template={templateForHeader}
         rowwise={4}
