@@ -200,40 +200,6 @@ const ManageGstReports = ({ document, onCancel }) => {
         setPurchases(filtered);
     }
 
-    const template = {
-        fields: [
-            {
-                title: "Total Gross",
-                name: "totalGross",
-                type: "text",
-                inpprops: { readOnly: true },
-            },
-            {
-                title: "Total CGST",
-                name: "totalCGST",
-                type: "text",
-                inpprops: { readOnly: true },
-            },
-            {
-                title: "Total SGST",
-                name: "totalSGST",
-                type: "text",
-                inpprops: { readOnly: true },
-            },
-            {
-                title: "Total IGST",
-                name: "totalIGST",
-                type: "text",
-                inpprops: { readOnly: true },
-            },
-            {
-                title: "Total GST",
-                name: "totalGST",
-                type: "text",
-                inpprops: { readOnly: true },
-            },
-        ],
-    };
 
 
     const templatePurchase = {
@@ -319,7 +285,7 @@ const ManageGstReports = ({ document, onCancel }) => {
             };
             // const res = await get(api + `/invoiceHeader/print/${rowData.invoiceHeader?.invoiceHeaderId||rowData.invoiceHeaderId}`);
             // const result = await get(api + "/invoiceHeader/download/excel/combinedGstReport");
-            const result = await post(api + "/invoiceHeader/download/excel/combinedGstReport", payload);
+            const result = await post(api + "/invoiceHeader/combinedGstReport", payload);
             // if (response.ok) {
 
             //     const blob = await response.blob();
@@ -349,6 +315,24 @@ const ManageGstReports = ({ document, onCancel }) => {
             }
         } catch (err) {
             setPreviewPopup(false);
+            console.log("errors,", err);
+        }
+    };
+    const handleExcelNew = async (rowData) => {
+        try {
+            const payload = {
+                fromDate: filterFromDate || null,
+                toDate: filterToDate || null
+            };
+            const result = await post(api + "/invoiceHeader/combinedGstReport", payload);
+            if (response.ok) {
+                const blob = await response.blob();
+                saveAs(blob, "combinedGstReport.xlsx");
+            } else {
+                AlertHandler("Failed to download file", "danger");
+            }
+        } catch (err) {
+            AlertHandler("Error downloading file", "danger");
             console.log("errors,", err);
         }
     };
@@ -528,7 +512,7 @@ const ManageGstReports = ({ document, onCancel }) => {
                 striped
                 title="Manage GstReports"
                 showExcelIcon={true}
-                handleExcelIcon={handleExcel}
+                handleExcelIcon={handleExcelNew}
                 // showPlusCircle={true}
                 // handleAddClick={showFormHandler({}, "Add")}
                 // template={filterTemplate}

@@ -25,7 +25,7 @@ const filterSlice = createSlice({
   name: 'filter',
   initialState: {
     filters: [],
-    
+      filterData: [], 
     activeActivityId: null,
     ...persistedState,
   },
